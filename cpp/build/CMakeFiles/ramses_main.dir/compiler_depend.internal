@@ -9,6 +9,8 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/Field.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/HydroSolver.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/MpiManager.hpp
+ /home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSolver.hpp
+ /home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSystem.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/PoissonSolver.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/Simulation.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/TreeUpdater.hpp

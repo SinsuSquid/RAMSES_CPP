@@ -46,6 +46,7 @@ set(RAMSES_SOURCES
     src/RamsesWriter.cpp
     src/ParticleSystem.cpp
     src/ParticleSolver.cpp
+    src/LoadBalancer.cpp
 )
 
 # Main library

@@ -71,6 +71,12 @@ void Simulation::run() {
         real_t dt = hydro_.compute_courant_step(1, dx, gamma, courant_factor);
         if (dt > 0.1) dt = 0.1;
         std::cout << "  Step " << nstep_ << " t=" << t_ << " dt=" << dt << std::endl;
+        
+        // Periodic Load Balance
+        if (nstep_ % 10 == 0) {
+            balancer_.balance();
+        }
+
         amr_step(1);
         t_ += dt;
     }

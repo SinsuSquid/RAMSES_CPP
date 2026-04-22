@@ -474,3 +474,44 @@ events:
         
       exitCode: 2
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1283 (try_compile)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1327 (_MPI_try_staged_settings)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1650 (_MPI_check_lang_works)"
+      - "CMakeLists.txt:8 (find_package)"
+    description: "The MPI test test_mpi for CXX in mode normal"
+    directories:
+      source: "/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm"
+      binary: "/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: '/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/sbin/gmake -f Makefile cmTC_b29ef/fast
+        gmake[1]: Entering directory '/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm'
+        /usr/sbin/gmake  -f CMakeFiles/cmTC_b29ef.dir/build.make CMakeFiles/cmTC_b29ef.dir/build
+        gmake[2]: Entering directory '/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm'
+        Building CXX object CMakeFiles/cmTC_b29ef.dir/test_mpi.cpp.o
+        /usr/sbin/c++   -std=gnu++17 -o CMakeFiles/cmTC_b29ef.dir/test_mpi.cpp.o -c /home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm/test_mpi.cpp
+        /home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm/test_mpi.cpp:1:10: fatal error: mpi.h: No such file or directory
+            1 | #include <mpi.h>
+              |          ^~~~~~~
+        compilation terminated.
+        gmake[2]: *** [CMakeFiles/cmTC_b29ef.dir/build.make:81: CMakeFiles/cmTC_b29ef.dir/test_mpi.cpp.o] Error 1
+        gmake[2]: Leaving directory '/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm'
+        gmake[1]: *** [Makefile:134: cmTC_b29ef/fast] Error 2
+        gmake[1]: Leaving directory '/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles/CMakeScratch/TryCompile-rYcjdm'
+        
+      exitCode: 2
+...

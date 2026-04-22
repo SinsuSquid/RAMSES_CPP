@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/Initializer.cpp.o"
   "CMakeFiles/ramses_lib.dir/src/Initializer.cpp.o.d"
+  "CMakeFiles/ramses_lib.dir/src/LoadBalancer.cpp.o"
+  "CMakeFiles/ramses_lib.dir/src/LoadBalancer.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/MpiManager.cpp.o"
   "CMakeFiles/ramses_lib.dir/src/MpiManager.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/Muscl.cpp.o"

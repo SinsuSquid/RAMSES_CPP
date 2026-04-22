@@ -299,6 +299,30 @@ src/Initializer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Initializer.cpp.s
 .PHONY : src/Initializer.cpp.s
 
+src/LoadBalancer.o: src/LoadBalancer.cpp.o
+.PHONY : src/LoadBalancer.o
+
+# target to build an object file
+src/LoadBalancer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/LoadBalancer.cpp.o
+.PHONY : src/LoadBalancer.cpp.o
+
+src/LoadBalancer.i: src/LoadBalancer.cpp.i
+.PHONY : src/LoadBalancer.i
+
+# target to preprocess a source file
+src/LoadBalancer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/LoadBalancer.cpp.i
+.PHONY : src/LoadBalancer.cpp.i
+
+src/LoadBalancer.s: src/LoadBalancer.cpp.s
+.PHONY : src/LoadBalancer.s
+
+# target to generate assembly for a file
+src/LoadBalancer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/LoadBalancer.cpp.s
+.PHONY : src/LoadBalancer.cpp.s
+
 src/MpiManager.o: src/MpiManager.cpp.o
 .PHONY : src/MpiManager.o
 
@@ -664,6 +688,9 @@ help:
 	@echo "... src/Initializer.o"
 	@echo "... src/Initializer.i"
 	@echo "... src/Initializer.s"
+	@echo "... src/LoadBalancer.o"
+	@echo "... src/LoadBalancer.i"
+	@echo "... src/LoadBalancer.s"
 	@echo "... src/MpiManager.o"
 	@echo "... src/MpiManager.i"
 	@echo "... src/MpiManager.s"

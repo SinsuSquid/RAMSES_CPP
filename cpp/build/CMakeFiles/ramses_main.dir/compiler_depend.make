@@ -8,6 +8,8 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o: /home/bgkang/RAMSES_CPP/cpp/src/main.
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/Field.hpp \
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/HydroSolver.hpp \
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/MpiManager.hpp \
+  /home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSolver.hpp \
+  /home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSystem.hpp \
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/PoissonSolver.hpp \
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/Simulation.hpp \
   /home/bgkang/RAMSES_CPP/cpp/include/ramses/TreeUpdater.hpp \
@@ -271,7 +273,7 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so:
 
-/usr/include/c++/15/bits/ostream.tcc:
+/usr/lib/gcc/x86_64-redhat-linux/15/libgcc.a:
 
 /lib64/ld-linux-x86-64.so.2:
 
@@ -319,13 +321,13 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/include/c++/15/streambuf:
 
-/usr/include/c++/15/bits/basic_ios.tcc:
+/usr/lib/gcc/x86_64-redhat-linux/15/libgcc_s.so:
+
+/usr/include/c++/15/bits/cxxabi_forced.h:
 
 /usr/include/c++/15/map:
 
 /usr/include/c++/15/bits/atomic_base.h:
-
-/usr/include/pthread.h:
 
 /usr/include/c++/15/bits/concept_check.h:
 
@@ -371,7 +373,17 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/include/bits/types/__fpos_t.h:
 
-/usr/include/bits/endianness.h:
+/usr/include/c++/15/bits/invoke.h:
+
+/usr/include/bits/types/__mbstate_t.h:
+
+/usr/include/asm/posix_types.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/c++/15/x86_64-redhat-linux/bits/ctype_inline.h:
 
 /usr/include/bits/uintn-identity.h:
 
@@ -409,19 +421,49 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /home/bgkang/RAMSES_CPP/cpp/src/main.cpp:
 
-/usr/include/asm/posix_types.h:
-
-/usr/include/bits/time.h:
-
-/usr/include/bits/stdio_lim.h:
-
-/usr/include/bits/types/__mbstate_t.h:
-
-/usr/include/c++/15/x86_64-redhat-linux/bits/ctype_inline.h:
-
 /usr/include/asm/posix_types_64.h:
 
 /home/bgkang/RAMSES_CPP/cpp/include/ramses/AmrGrid.hpp:
+
+/usr/include/asm/types.h:
+
+/usr/include/alloca.h:
+
+/usr/include/bits/types/__sigset_t.h:
+
+/usr/include/stdc-predef.h:
+
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/Types.hpp:
+
+/usr/include/gnu/stubs-64.h:
+
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/Constants.hpp:
+
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/Config.hpp:
+
+/usr/include/c++/15/bits/allocator.h:
+
+/usr/include/asm-generic/posix_types.h:
+
+/usr/include/c++/15/bit:
+
+/usr/include/pthread.h:
+
+/usr/include/c++/15/cstddef:
+
+/usr/include/errno.h:
+
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/Simulation.hpp:
+
+/usr/include/c++/15/string_view:
+
+/usr/include/asm-generic/bitsperlong.h:
+
+/usr/include/asm-generic/types.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/c++/15/bits/std_abs.h:
 
 /usr/include/asm-generic/errno.h:
 
@@ -435,37 +477,11 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/lib64/crt1.o:
 
-/usr/include/asm-generic/errno-base.h:
-
-/usr/include/asm-generic/bitsperlong.h:
-
-/usr/include/asm-generic/types.h:
-
-/usr/include/bits/types/__sigset_t.h:
-
-/usr/include/c++/15/bit:
-
-/usr/include/c++/15/bits/allocator.h:
-
-/usr/include/asm-generic/posix_types.h:
-
-/usr/include/stdc-predef.h:
-
-/home/bgkang/RAMSES_CPP/cpp/include/ramses/Types.hpp:
-
-/usr/include/gnu/stubs-64.h:
-
-/home/bgkang/RAMSES_CPP/cpp/include/ramses/Constants.hpp:
-
-/home/bgkang/RAMSES_CPP/cpp/include/ramses/Config.hpp:
-
-/home/bgkang/RAMSES_CPP/cpp/include/ramses/Simulation.hpp:
-
-/usr/include/c++/15/string_view:
-
-/usr/include/c++/15/bits/std_abs.h:
+/usr/include/bits/types/__locale_t.h:
 
 /usr/include/c++/15/bits/ostream_insert.h:
+
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSolver.hpp:
 
 /usr/include/bits/types/error_t.h:
 
@@ -497,9 +513,13 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/include/bits/types/__fpos64_t.h:
 
-/usr/include/asm/types.h:
+/usr/include/c++/15/bits/basic_ios.tcc:
 
-/usr/include/alloca.h:
+/home/bgkang/RAMSES_CPP/cpp/include/ramses/ParticleSystem.hpp:
+
+/usr/include/c++/15/bits/stl_tempbuf.h:
+
+/usr/include/bits/endianness.h:
 
 /usr/include/c++/15/x86_64-redhat-linux/bits/error_constants.h:
 
@@ -561,9 +581,7 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/include/c++/15/x86_64-redhat-linux/bits/atomic_word.h:
 
-/usr/include/bits/types/__locale_t.h:
-
-/usr/include/c++/15/bits/invoke.h:
+/usr/include/c++/15/bits/ostream.tcc:
 
 /usr/include/c++/15/bits/postypes.h:
 
@@ -616,8 +634,6 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 /usr/include/c++/15/cctype:
 
 /usr/include/c++/15/bits/stl_raw_storage_iter.h:
-
-/usr/include/c++/15/bits/stl_tempbuf.h:
 
 /usr/include/bits/waitstatus.h:
 
@@ -721,10 +737,6 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 
 /usr/include/endian.h:
 
-/usr/include/c++/15/cstddef:
-
-/usr/include/errno.h:
-
 /usr/include/features-time64.h:
 
 /usr/include/bits/types/FILE.h:
@@ -780,9 +792,3 @@ CMakeFiles/ramses_main.dir/src/main.cpp.o:
 /usr/include/c++/15/bits/stl_iterator_base_types.h:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/crtend.o:
-
-/usr/lib/gcc/x86_64-redhat-linux/15/libgcc.a:
-
-/usr/include/c++/15/bits/cxxabi_forced.h:
-
-/usr/lib/gcc/x86_64-redhat-linux/15/libgcc_s.so:
