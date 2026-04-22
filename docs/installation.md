@@ -1,25 +1,41 @@
 ---
 layout: default
+title: Installation
 ---
 
 # Installation
 
+Building RAMSES-CPP is designed to be straightforward using modern CMake.
+
 ## Prerequisites
-- **CMake** (>= 3.15)
-- **C++17 compliant compiler** (e.g., GCC 9+, Clang)
-- **MPI** (Optional)
+
+To build RAMSES-CPP from source, ensure you have the following installed on your system:
+
+- **CMake** (version 3.15 or higher)
+- **C++17 compliant compiler** (e.g., GCC 9+, Clang 10+, Apple Clang)
+- **MPI (Message Passing Interface)** (Optional, but recommended for parallel execution. e.g., OpenMPI, MPICH)
 
 ## Building from Source
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/SinsuSquid/RAMSES_CPP.git
    cd RAMSES_CPP
    ```
 
-2. Build:
+2. **Create a build directory and configure with CMake:**
    ```bash
    mkdir build && cd build
    cmake ..
+   ```
+
+3. **Compile the project:**
+   ```bash
    make -j$(nproc)
    ```
+
+   This will generate the main executable `ramses_main` and the reference verification tool `verify_ref` in the `build/` directory.
+
+## Parallel Support (MPI)
+
+If an MPI implementation is installed and detected by CMake, the build system will automatically define `RAMSES_USE_MPI`. This enables the `LoadBalancer` class for distributed execution and compiles the code to run across multiple MPI ranks. If MPI is not found, the code safely falls back to a sequential build.
