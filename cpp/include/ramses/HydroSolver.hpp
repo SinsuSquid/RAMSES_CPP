@@ -38,8 +38,24 @@ private:
      */
     void godfine1(const std::vector<int>& ind_grid, int ilevel);
     static void ctoprim(const real_t u[], real_t q[], real_t gamma);
-};
 
-} // namespace ramses
+    /**
+     * @brief A local 6x6x6 (3D) or equivalent 1D/2D stencil for Godunov solver.
+     */
+    struct LocalStencil {
+        // [i][j][k][ivar] - using fixed sizes for performance
+        // IU1=-1, IU2=4 => 6 cells in each direction
+        real_t uloc[6][6][6][5]; 
+        bool refined[6][6][6];
+    };
+
+    private:
+    AmrGrid& grid_;
+
+    /**
+     * @brief Gathers a 6x6x6 stencil for a specific oct.
+     */
+    void gather_stencil(int igrid, int ilevel, LocalStencil& stencil);
+
 
 #endif // RAMSES_HYDRO_SOLVER_HPP

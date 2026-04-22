@@ -47,6 +47,57 @@ void HydroSolver::ctoprim(const real_t u[], real_t q[], real_t gamma) {
     q[4] = std::max(e_int * (gamma - 1.0), d * 1e-10); // pressure floor
 }
 
+void HydroSolver::gather_stencil(int igrid, int ilevel, LocalStencil& stencil) {
+    int nbors_father[27];
+    grid_.get_3x3x3_father(igrid, nbors_father);
+    
+    // Loop over 3x3x3 father cells
+    for (int k1 = 0; k1 < 3; ++k1) {
+    for (int j1 = 0; j1 < 3; ++j1) {
+    for (int i1 = 0; i1 < 3; ++i1) {
+        int ifather = nbors_father[i1 + 3*j1 + 9*k1];
+        int ison = grid_.son[ifather];
+        
+        if (ison > 0) {
+            // Neighbor exists, gather 2x2x2 cells
+            for (int k2 = 0; k2 < 2; ++k2) {
+            for (int j2 = 0; j2 < 2; ++j2) {
+            for (int i2 = 0; i2 < 2; ++i2) {
+                int icell_pos = 1 + i2 + 2*j2 + 4*k2;
+                int ind_cell = grid_.ncoarse + (icell_pos - 1) * grid_.ngridmax + ison;
+                
+                int i3 = i1 * 2 + i2;
+                int j3 = j1 * 2 + j2;
+                int k3 = k1 * 2 + k2;
+                
+                for (int iv = 1; iv <= grid_.nvar; ++iv) {
+                    stencil.uloc[i3][j3][k3][iv - 1] = grid_.uold(ind_cell, iv);
+                }
+                stencil.refined[i3][j3][k3] = (grid_.son[ind_cell] > 0);
+            }
+            }
+            }
+        } else {
+            // Neighbor doesn't exist, interpolate from father (simple injection for now)
+            for (int k2 = 0; k2 < 2; ++k2) {
+            for (int j2 = 0; j2 < 2; ++j2) {
+            for (int i2 = 0; i2 < 2; ++i2) {
+                int i3 = i1 * 2 + i2;
+                int j3 = j1 * 2 + j2;
+                int k3 = k1 * 2 + k2;
+                
+                for (int iv = 1; iv <= grid_.nvar; ++iv) {
+                    stencil.uloc[i3][j3][k3][iv - 1] = grid_.uold(ifather, iv);
+                }
+                stencil.refined[i3][j3][k3] = false;
+            }
+            }
+            }
+        }
+    }
+    }
+}
+
 void HydroSolver::godfine1(const std::vector<int>& ind_grid, int ilevel) {
     // ind_grid contains 1-based oct indices
     real_t gamma = 1.4;

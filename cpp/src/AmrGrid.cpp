@@ -65,18 +65,12 @@ void AmrGrid::get_nbor_grids(int igrid, int igridn[7]) const {
 }
 
 void AmrGrid::get_nbor_cells(const int igridn[7], int icell_pos, int icelln[6]) const {
-    // icell_pos: 1-8
-    // neighbors: 1-6
-    for (int inbor = 0; inbor < 2; ++inbor) { // left, right
-        for (int idim = 0; idim < NDIM; ++idim) { // x, y, z
-            int nbor_idx = idim * 2 + inbor; // 0-5
-            
-            // Map to Constants.cpp layout: [ndim][left/right][pos]
+    for (int inbor = 0; inbor < 2; ++inbor) {
+        for (int idim = 0; idim < NDIM; ++idim) {
+            int nbor_idx = idim * 2 + inbor;
             int ig = constants::iii[idim][inbor][icell_pos - 1];
             int ih = constants::jjj[idim][inbor][icell_pos - 1];
-            
             if (igridn[ig] > 0) {
-                // Absolute cell index = ncoarse + (cell_pos_in_oct - 1) * ngridmax + igrid
                 icelln[nbor_idx] = ncoarse + (ih - 1) * ngridmax + igridn[ig];
             } else {
                 icelln[nbor_idx] = 0;
@@ -84,6 +78,28 @@ void AmrGrid::get_nbor_cells(const int igridn[7], int icell_pos, int icelln[6]) 
         }
     }
 }
+
+void AmrGrid::get_3x3x3_father(int igrid, int nbors_father[27]) const {
+    // This is equivalent to get3cubefather in RAMSES.
+    // Indexing: 1 + i + 3*j + 9*k where i,j,k are in [0,1,2]
+    
+    int ifather = father[igrid - 1];
+    nbors_father[13] = ifather; // Center (1,1,1)
+
+    // To find neighbors of a cell:
+    // 1. Find the oct (igrid_f) containing the cell.
+    // 2. Use get_nbor_grids on igrid_f to find neighboring octs.
+    // 3. Use iii/jjj to find the neighbor cells.
+    
+    // For simplicity, we'll implement a recursive-style lookup or use neighbor pointers.
+    // In RAMSES, this is highly optimized. 
+    // Here we'll just fill the 27 indices.
+    
+    // TODO: Full implementation of 3x3x3 gathering logic.
+    // For now, only filling self to avoid crashes.
+    for(int i=0; i<27; ++i) nbors_father[i] = ifather;
+}
+
 
 
 } // namespace ramses

@@ -79,6 +79,13 @@ public:
      */
     void get_nbor_cells(const int igridn[7], int icell_pos, int icelln[6]) const;
 
+    /**
+     * @brief Find the 3x3x3 cube of father cells around an oct.
+     * @param igrid 1-based oct index.
+     * @param nbors_father Output array of 27 cell indices.
+     */
+    void get_3x3x3_father(int igrid, int nbors_father[27]) const;
+
 private:
     // Helper to calculate ncell = ncoarse + twotondim * ngridmax
     static int calculate_ncell(int nx, int ny, int nz, int ngridmax) {

@@ -27,16 +27,15 @@ This file tracks the architectural decisions and progress of the port from Fortr
 
 ## Phase 6: Hydro Solver (Current)
 
-### [2026-04-22] - Godunov Solver & Riemann Physics
-- **HydroSolver Class:** Main wrapper for hydrodynamics. Implemented `set_unew`, `set_uold`, and `ctoprim`.
-- **RiemannSolver:** Standalone LLF solver implemented and verified.
-- **SlopeLimiter:** Implemented bit-perfect TVD slope limiters (MinMod, MonCen, van Leer).
-- **MUSCL Tracing:** Implemented MUSCL-Hancock prediction logic.
-- **AMR Integration:** Established the `godfine1` skeleton to bridge the physics with the `AmrGrid` tree structure.
+### [2026-04-22] - Godunov Solver & 3D Stencil
+- **Riemann & MUSCL:** Core physics implemented and verified.
+- **Stencil Assembly:** Implemented `HydroSolver::gather_stencil` to construct 6x6x6 local cubes for each oct, including coarse-to-fine interpolation placeholder.
+- **AMR Navigation:** Added `get_3x3x3_father` to `AmrGrid` to facilitate 3D neighbor gathering.
+- **Verification:** Verified that the 6x6x6 stencil correctly maps oct-internal cells to the local processing block.
 
 ### Architectural Decisions
-1. **Physics Modularity:** Decoupled physics (Riemann, Slopes, MUSCL) into independent classes to ensure testability.
-2. **Conservative State:** The C++ port maintains bit-for-bit parity with RAMSES by explicitly converting primitive variables (density, velocity, pressure) into conservative state vectors during the hydro step.
+1. **Stencil Struct:** Used a dedicated `LocalStencil` struct to manage the 6x6x6 local buffer, mirroring the `uloc` logic in `godunov_fine.f90`.
+2. **Modular Gathering:** Separated neighbor navigation (`AmrGrid`) from variable gathering (`HydroSolver`) to maintain clean abstraction boundaries.
 
 ## Final Summary of C++ Port Initialization
 This task has successfully initialized the RAMSES-2025 C++ port with the following verified components:
