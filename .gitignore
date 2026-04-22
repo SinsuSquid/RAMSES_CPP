@@ -1,8 +1,8 @@
 # Build
 build/
 
-# GitHub
-.github
+# Hidden Files
+.*
 
 # Prerequisites
 *.d

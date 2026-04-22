@@ -1,4 +1,5 @@
 #include "ramses/ParticleSolver.hpp"
+#include "ramses/Parameters.hpp"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
