@@ -1,7 +1,11 @@
 #include "ramses/Simulation.hpp"
 #include "ramses/Parameters.hpp"
 #include "ramses/Initializer.hpp"
+#include "ramses/RamsesWriter.hpp"
 #include <iostream>
+#include <iomanip>
+#include <sys/stat.h>
+#include <sstream>
 
 namespace ramses {
 
@@ -13,16 +17,33 @@ void Simulation::initialize(const std::string& nml_path) {
 
     // Map parameters
     namespace p = ramses::params;
-    p::nx = config_.get_int("amr_params", "nx", 2);
-    p::ny = config_.get_int("amr_params", "ny", 2);
-    p::nz = config_.get_int("amr_params", "nz", 2);
-    int ngridmax = config_.get_int("amr_params", "ngridmax", 1000);
+    p::nx = config_.get_int("amr_params", "nx", 1);
+    p::ny = config_.get_int("amr_params", "ny", 1);
+    p::nz = config_.get_int("amr_params", "nz", 1);
+    int ngridmax = config_.get_int("amr_params", "ngridmax", 0);
+    if (ngridmax == 0) ngridmax = config_.get_int("amr_params", "ngridtot", 1000000);
     int nvar = config_.get_int("hydro_params", "nvar", 5);
     int nlevelmax = config_.get_int("amr_params", "levelmax", 10);
+    if (nlevelmax < 20) nlevelmax = 20; // Ensure headroom for ilevel+1 access
     nstepmax_ = config_.get_int("run_params", "nstepmax", 10);
 
     grid_.allocate(p::nx, p::ny, p::nz, ngridmax, nvar, 1, nlevelmax);
     
+    // Build initial tree up to levelmin
+    int levelmin = config_.get_int("amr_params", "levelmin", 1);
+    std::cout << "[Simulation] Building initial AMR tree up to level " << levelmin << "..." << std::endl;
+    
+    // Level 1 refinement
+    updater_.mark_all(1);
+    updater_.refine_coarse();
+    
+    // Further levels
+    for (int ilevel = 1; ilevel < levelmin; ++ilevel) {
+        std::cout << "  [Simulation] Initial Refinement Level " << ilevel << " -> " << ilevel + 1 << std::endl;
+        updater_.mark_all(ilevel);
+        updater_.refine_fine(ilevel);
+    }
+
     // Apply Initial Conditions
     Initializer init(grid_, config_);
     init.apply_all();
@@ -39,24 +60,35 @@ void Simulation::run() {
 
     while (t_ < tend_ && nstep_ < nstepmax_) {
         nstep_++;
-        
-        // Calculate dynamic timestep
         real_t dt = hydro_.compute_courant_step(1, dx, gamma, courant_factor);
-        if (dt > 0.1) dt = 0.1; // Cap for stability in initial steps
-
+        if (dt > 0.1) dt = 0.1;
         std::cout << "  Step " << nstep_ << " t=" << t_ << " dt=" << dt << std::endl;
-        
-        // Root level step
         amr_step(1);
-        
         t_ += dt;
     }
     
-    std::cout << "[Simulation] Run complete." << std::endl;
+    std::cout << "[Simulation] Run complete. Dumping final snapshot..." << std::endl;
+    dump_snapshot(1);
+}
+
+void Simulation::dump_snapshot(int iout) {
+    std::stringstream ss;
+    ss << "output_" << std::setw(5) << std::setfill('0') << iout;
+    std::string dir = ss.str();
+    
+    mkdir(dir.c_str(), 0777);
+    
+    std::string amr_file = dir + "/amr_00001.out1";
+    RamsesWriter writer(amr_file);
+    if (writer.is_open()) {
+        writer.write_amr(grid_);
+        std::cout << "[Simulation] Snapshot written to " << amr_file << std::endl;
+    }
 }
 
 void Simulation::amr_step(int ilevel) {
     if (ilevel > grid_.nlevelmax) return;
+    if (grid_.count_grids_at_level(ilevel) == 0) return;
 
     // 1. Poisson solver (gravity)
     poisson_.solve(ilevel);
@@ -64,15 +96,13 @@ void Simulation::amr_step(int ilevel) {
     // 2. Hydro update for this level
     hydro_.godunov_fine(ilevel);
     
-    // 2. Recursive step for finer levels (Sub-cycling)
+    // 3. Recursive step for finer levels (Sub-cycling)
     if (ilevel < grid_.nlevelmax) {
-        amr_step(ilevel + 1);
-        amr_step(ilevel + 1);
+        if (grid_.count_grids_at_level(ilevel + 1) > 0) {
+            amr_step(ilevel + 1);
+            amr_step(ilevel + 1);
+        }
     }
-    
-    // 3. Restriction (average fine cells to coarse)
-    // This is where upload_fine(ilevel) would go
 }
-
 
 } // namespace ramses

@@ -1,5 +1,6 @@
 #include "ramses/AmrGrid.hpp"
 #include "ramses/Parameters.hpp"
+#include <iostream>
 
 namespace ramses {
 
@@ -9,24 +10,31 @@ void AmrGrid::allocate(int nx_val, int ny_val, int nz_val, int ngridmax_val, int
     nvar = nvar_val;
     ncpu = ncpu_val;
     nlevelmax = nlevelmax_val;
+    ndim = NDIM;
     ncell = calculate_ncell(nx_val, ny_val, nz_val, ngridmax_val);
 
+    std::cout << "[AmrGrid] Allocating Grid: ncoarse=" << ncoarse 
+              << " ngridmax=" << ngridmax 
+              << " ncell=" << ncell << std::endl;
+
     // Allocate tree arrays (oct-based)
-    xg.assign(ngridmax * NDIM, 0.0);
+    xg.assign(static_cast<size_t>(ngridmax) * ndim, 0.0);
     father.assign(ngridmax, 0);
-    nbor.assign(ngridmax * 2 * NDIM, 0);
+    nbor.assign(static_cast<size_t>(ngridmax) * 2 * NDIM, 0);
     next.assign(ngridmax, 0);
     prev.assign(ngridmax, 0);
 
     // Allocate cell-based arrays
-    son.assign(ncell + 1, 0);
-    flag1.assign(ncell + 1, 0);
-    flag2.assign(ncell + 1, 0);
-    cpu_map.assign(ncell + 1, 0);
+    son.assign(static_cast<size_t>(ncell) + 1, 0);
+    flag1.assign(static_cast<size_t>(ncell) + 1, 0);
+    flag2.assign(static_cast<size_t>(ncell) + 1, 0);
+    cpu_map.assign(static_cast<size_t>(ncell) + 1, 1); // Default to rank 1
+    divu.assign(static_cast<size_t>(ncell) + 1, 0.0);
 
     // Allocate physical fields
     uold.allocate(ncell, nvar);
     unew.allocate(ncell, nvar);
+    divu.assign(ncell + 1, 0.0);
 
     // Allocate linked list pointers
     headl.allocate(ncpu, nlevelmax);

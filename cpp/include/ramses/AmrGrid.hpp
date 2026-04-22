@@ -38,6 +38,7 @@ public:
     // Physical Fields
     Field<real_t> uold;           // State vector [ncell, nvar]
     Field<real_t> unew;           // Updated state vector [ncell, nvar]
+    std::vector<real_t> divu;     // Velocity divergence [ncell]
 
     // Linked list pointers (1-based level indexing)
     Field<int> headl;             // Head grid in level list [ncpu, nlevelmax]
@@ -59,6 +60,18 @@ public:
     int nvar;
     int ncpu;
     int nlevelmax;
+    int ndim;
+
+    /**
+     * @brief Returns total number of grids at a specific level across all CPUs.
+     */
+    int count_grids_at_level(int ilevel) const {
+        int total = 0;
+        for (int i = 1; i <= ncpu; ++i) {
+            total += numbl(i, ilevel);
+        }
+        return total;
+    }
 
     // 1-based utility accessors
     inline real_t& get_xg(int igrid, int idim) { return xg[(idim - 1) * ngridmax + (igrid - 1)]; }

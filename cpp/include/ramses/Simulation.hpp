@@ -21,6 +21,7 @@ public:
 
 private:
     void amr_step(int ilevel);
+    void dump_snapshot(int iout);
 
     AmrGrid grid_;
     HydroSolver hydro_;

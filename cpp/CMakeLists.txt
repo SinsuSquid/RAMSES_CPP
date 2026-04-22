@@ -43,6 +43,7 @@ set(RAMSES_SOURCES
     src/MpiManager.cpp
     src/PoissonSolver.cpp
     src/Initializer.cpp
+    src/RamsesWriter.cpp
 )
 
 # Main library
@@ -57,3 +58,6 @@ target_link_libraries(ramses_main ramses_lib)
 if(MPI_FOUND)
     target_link_libraries(ramses_main MPI::MPI_C)
 endif()
+
+add_executable(verify_ref src/verify_ref.cpp)
+target_link_libraries(verify_ref ramses_lib)

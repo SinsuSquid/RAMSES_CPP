@@ -142,6 +142,19 @@ ramses_main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_main.dir/build.make CMakeFiles/ramses_main.dir/build
 .PHONY : ramses_main/fast
 
+#=============================================================================
+# Target rules for targets named verify_ref
+
+# Build rule for target.
+verify_ref: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 verify_ref
+.PHONY : verify_ref
+
+# fast build rule for target.
+verify_ref/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/verify_ref.dir/build.make CMakeFiles/verify_ref.dir/build
+.PHONY : verify_ref/fast
+
 src/AmrGrid.o: src/AmrGrid.cpp.o
 .PHONY : src/AmrGrid.o
 
@@ -406,6 +419,30 @@ src/RamsesReader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.s
 .PHONY : src/RamsesReader.cpp.s
 
+src/RamsesWriter.o: src/RamsesWriter.cpp.o
+.PHONY : src/RamsesWriter.o
+
+# target to build an object file
+src/RamsesWriter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesWriter.cpp.o
+.PHONY : src/RamsesWriter.cpp.o
+
+src/RamsesWriter.i: src/RamsesWriter.cpp.i
+.PHONY : src/RamsesWriter.i
+
+# target to preprocess a source file
+src/RamsesWriter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesWriter.cpp.i
+.PHONY : src/RamsesWriter.cpp.i
+
+src/RamsesWriter.s: src/RamsesWriter.cpp.s
+.PHONY : src/RamsesWriter.s
+
+# target to generate assembly for a file
+src/RamsesWriter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesWriter.cpp.s
+.PHONY : src/RamsesWriter.cpp.s
+
 src/RiemannSolver.o: src/RiemannSolver.cpp.o
 .PHONY : src/RiemannSolver.o
 
@@ -526,6 +563,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_main.dir/build.make CMakeFiles/ramses_main.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/verify_ref.o: src/verify_ref.cpp.o
+.PHONY : src/verify_ref.o
+
+# target to build an object file
+src/verify_ref.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/verify_ref.dir/build.make CMakeFiles/verify_ref.dir/src/verify_ref.cpp.o
+.PHONY : src/verify_ref.cpp.o
+
+src/verify_ref.i: src/verify_ref.cpp.i
+.PHONY : src/verify_ref.i
+
+# target to preprocess a source file
+src/verify_ref.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/verify_ref.dir/build.make CMakeFiles/verify_ref.dir/src/verify_ref.cpp.i
+.PHONY : src/verify_ref.cpp.i
+
+src/verify_ref.s: src/verify_ref.cpp.s
+.PHONY : src/verify_ref.s
+
+# target to generate assembly for a file
+src/verify_ref.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/verify_ref.dir/build.make CMakeFiles/verify_ref.dir/src/verify_ref.cpp.s
+.PHONY : src/verify_ref.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -536,6 +597,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ramses_lib"
 	@echo "... ramses_main"
+	@echo "... verify_ref"
 	@echo "... src/AmrGrid.o"
 	@echo "... src/AmrGrid.i"
 	@echo "... src/AmrGrid.s"
@@ -569,6 +631,9 @@ help:
 	@echo "... src/RamsesReader.o"
 	@echo "... src/RamsesReader.i"
 	@echo "... src/RamsesReader.s"
+	@echo "... src/RamsesWriter.o"
+	@echo "... src/RamsesWriter.i"
+	@echo "... src/RamsesWriter.s"
 	@echo "... src/RiemannSolver.o"
 	@echo "... src/RiemannSolver.i"
 	@echo "... src/RiemannSolver.s"
@@ -584,6 +649,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/verify_ref.o"
+	@echo "... src/verify_ref.i"
+	@echo "... src/verify_ref.s"
 .PHONY : help
 
 

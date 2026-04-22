@@ -28,6 +28,7 @@ void Initializer::region_condinit() {
         grid_.uold(i, 3) = 0.0;
         grid_.uold(i, 4) = 0.0;
         grid_.uold(i, 5) = p_bg / (gamma - 1.0);
+        grid_.cpu_map[i] = 1; // Default to rank 1 (1-based)
     }
 
     // Sedov Center (Assume region 2 is a point center)

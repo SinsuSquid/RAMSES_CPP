@@ -3,6 +3,7 @@
 
 #include "AmrGrid.hpp"
 #include <vector>
+#include <memory>
 
 namespace ramses {
 
@@ -36,6 +37,9 @@ private:
     AmrGrid& grid_;
 
     void gather_stencil(int igrid, int ilevel, LocalStencil& stencil);
+    
+    // Heap-allocated workspace to avoid stack overflow
+    std::unique_ptr<LocalStencil> stencil_ptr_ = std::make_unique<LocalStencil>();
 };
 
 } // namespace ramses

@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ramses_lib.dir/src/PoissonSolver.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o"
   "CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o.d"
+  "CMakeFiles/ramses_lib.dir/src/RamsesWriter.cpp.o"
+  "CMakeFiles/ramses_lib.dir/src/RamsesWriter.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o"
   "CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o.d"
   "CMakeFiles/ramses_lib.dir/src/Simulation.cpp.o"

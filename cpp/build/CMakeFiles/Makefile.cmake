@@ -53,4 +53,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/ramses_lib.dir/DependInfo.cmake"
   "CMakeFiles/ramses_main.dir/DependInfo.cmake"
+  "CMakeFiles/verify_ref.dir/DependInfo.cmake"
   )

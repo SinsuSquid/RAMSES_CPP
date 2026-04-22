@@ -29,6 +29,11 @@ public:
      */
     void mark_cells(int ilevel);
 
+    /**
+     * @brief Marks all cells on a level for refinement.
+     */
+    void mark_all(int ilevel);
+
 private:
     AmrGrid& grid_;
 

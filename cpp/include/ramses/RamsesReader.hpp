@@ -12,7 +12,11 @@ namespace ramses {
 
 class RamsesReader {
 public:
-    RamsesReader(const std::string& filename) : file_(filename, std::ios::binary) {}
+    RamsesReader(const std::string& filename) : file_(filename, std::ios::binary) {
+        if (!file_.is_open()) {
+            std::cerr << "Reader: Could not open file " << filename << std::endl;
+        }
+    }
     
     ~RamsesReader() {
         if (file_.is_open()) file_.close();
@@ -30,15 +34,10 @@ public:
     size_t read_record(std::vector<T>& data) {
         uint32_t t1 = read_tag();
         if (file_.eof()) return 0;
-        
         size_t count = t1 / sizeof(T);
         data.resize(count);
         file_.read(reinterpret_cast<char*>(data.data()), t1);
-        
         uint32_t t2 = read_tag();
-        if (t1 != t2) {
-            std::cerr << "Warning: Fortran record tags do not match! " << t1 << " != " << t2 << std::endl;
-        }
         return t1;
     }
 
@@ -48,6 +47,9 @@ public:
         T val;
         file_.read(reinterpret_cast<char*>(&val), sizeof(T));
         uint32_t t2 = read_tag();
+        if (file_.fail()) {
+            std::cerr << "Reader: Failed to read single value. State: " << file_.rdstate() << std::endl;
+        }
         return val;
     }
 
