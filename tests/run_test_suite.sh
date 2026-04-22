@@ -72,11 +72,15 @@ done
 TEST_DIRECTORY=$(pwd);                    # The test suite directory
 BASE_DIRECTORY="${TEST_DIRECTORY}/.."; # The main RAMSES directory
 BIN_DIRECTORY="${BASE_DIRECTORY}/bin";    # The bin directory
+BUILD_DIRECTORY="${BASE_DIRECTORY}/build"; # The build directory
 VISU_DIR="${TEST_DIRECTORY}/visu";        # The visualization directory
+
+mkdir -p ${BUILD_DIRECTORY};
 
 export PYTHONPATH=${VISU_DIR}:$PYTHONPATH;
 DELETE_RESULTS="rm -rf output_* *.tex data*.dat *.pdf *.pyc *.gc* coverage_stats.txt";
 RETURN_TO_BIN="cd ${BIN_DIRECTORY}";
+RETURN_TO_BUILD="cd ${BUILD_DIRECTORY}";
 EXECNAME="test_exe_";
 LOGFILE="${TEST_DIRECTORY}/test_suite.log";
 GIT_URL=$(git config --get remote.origin.url | sed 's/git@github.com:/https:\/\/github.com\//g');
@@ -144,9 +148,9 @@ if $CLEAN_ALL ; then
          $SHELL after_test.sh;
       fi
    done
-   $RETURN_TO_BIN;
+   $RETURN_TO_BUILD;
    make clean;
-   rm -f ${EXECNAME}*d;
+   rm -f ${BIN_DIRECTORY}/${EXECNAME}*d;
    exit;
 fi
 
@@ -280,8 +284,8 @@ for ((i=0;i<$ntests;i++)); do
    done
 
    # Initial cleanup
-   $RETURN_TO_BIN;
-   if ${make_clean[n]}; then
+   $RETURN_TO_BUILD;
+   if [ "${make_clean[n]}" = "true" ]; then
       echo "Cleanup" | tee -a $LOGFILE;
       if $VERBOSE ; then
          make clean 2>&1 | tee -a $LOGFILE;
@@ -292,15 +296,28 @@ for ((i=0;i<$ntests;i++)); do
 
    # Compile source
    echo "Compiling source" | tee -a $LOGFILE;
-   MAKESTRING="make EXEC=${EXECNAME} MPI=${MPI} GCOV=${GCOV} ${FLAGS}";
-   # if [ ${MPI} -eq 1 ]; then
-   #    MAKESTRING="${MAKESTRING} -j ${NCPU}";
-   # fi
-   if $VERBOSE ; then
-      $MAKESTRING 2>&1 | tee -a $LOGFILE;
-   else
-      $MAKESTRING >> $LOGFILE 2>&1;
+   # Convert FLAGS to CMake arguments
+   CMAKE_ARGS="-DRAMSES_NDIM=${ndim}"
+   for ((k=0;k<$nflags;k++)); do
+      flag_name=$(echo ${flag_split[$k]} | cut -d '=' -f1)
+      flag_val=$(echo ${flag_split[$k]} | cut -d '=' -f2)
+      if [ "$flag_name" != "NDIM" ] && [ "$flag_name" != "PATCH" ] && [ -n "$flag_val" ]; then
+          CMAKE_ARGS="${CMAKE_ARGS} -D${flag_name}=${flag_val}"
+      fi
+   done
+   if [ ${MPI} -eq 1 ]; then
+      CMAKE_ARGS="${CMAKE_ARGS} -DRAMSES_USE_MPI=ON"
    fi
+
+   if $VERBOSE ; then
+      cmake .. ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Debug 2>&1 | tee -a $LOGFILE;
+      make ramses_main 2>&1 | tee -a $LOGFILE;
+   else
+      cmake .. ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Debug >> $LOGFILE 2>&1;
+      make ramses_main >> $LOGFILE 2>&1;
+   fi
+   mkdir -p ${BIN_DIRECTORY}
+   cp ramses_main ${BIN_DIRECTORY}/${EXECNAME}${ndim}d
 
    # Run test
    cd ${TEST_DIRECTORY}/${testname[n]};
@@ -369,10 +386,10 @@ for ((i=0;i<$ntests;i++)); do
 
    # move coverage files to test dir
    if ${COVERAGE} ; then
-      $RETURN_TO_BIN;
+      $RETURN_TO_BUILD;
       gcov *.gcno > coverage_stats.txt
       cd -
-      mv ${BIN_DIRECTORY}/*.gc* .
+      mv ${BUILD_DIRECTORY}/*.gc* .
    fi
 done
 
@@ -531,13 +548,13 @@ if ${DELDATA} ; then
          ${SHELL} ${AFTERTEST};
       fi
    done
-   $RETURN_TO_BIN;
+   $RETURN_TO_BUILD;
    if $VERBOSE ; then
       make clean 2>&1 | tee -a $LOGFILE;
    else
       make clean >> $LOGFILE 2>&1;
    fi
-   rm -f ${EXECNAME}*d;
+   rm -f ${BIN_DIRECTORY}/${EXECNAME}*d;
 fi
 
 if $all_tests_ok ; then

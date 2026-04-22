@@ -1,0 +1,6 @@
+ compile date    = 04/22/26-13:01:10
+ compile command = make  -- EXEC=ramses3d MPI=0 NDIM=3
+ patch dir       = 
+ remote repo     = git@github.com:SinsuSquid/RAMSES_CPP.git
+ local branch    = main
+ last commit     = 88bdca9db7d50d048a3fc45fe1c6e0b118a10b6e
