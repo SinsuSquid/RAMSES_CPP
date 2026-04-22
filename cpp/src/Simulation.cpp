@@ -33,6 +33,10 @@ void Simulation::initialize(const std::string& nml_path) {
 
     grid_.allocate(p::nx, p::ny, p::nz, ngridmax, nvar, 1, nlevelmax);
     
+    // Allocate Particle System
+    int npartmax = config_.get_int("amr_params", "nparttot", 10000);
+    ps_.allocate(npartmax, ngridmax);
+    
     // Build initial tree up to levelmin
     int levelmin = config_.get_int("amr_params", "levelmin", 1);
     std::cout << "[Simulation] Building initial AMR tree up to level " << levelmin << "..." << std::endl;
@@ -139,8 +143,12 @@ void Simulation::amr_step(int ilevel) {
 
     // 2. Hydro update for this level
     hydro_.godunov_fine(ilevel);
-    
-    // 3. Recursive step for finer levels (Sub-cycling)
+
+    // 3. Particle movement
+    ptcl_solver_.move_fine(ilevel, 0.01); // TODO: Pass actual dt
+
+    // 4. Recursive step for finer levels (Sub-cycling)
+
     if (ilevel < grid_.nlevelmax) {
         if (grid_.count_grids_at_level(ilevel + 1) > 0) {
             amr_step(ilevel + 1);

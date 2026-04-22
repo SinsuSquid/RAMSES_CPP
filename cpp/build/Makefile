@@ -371,6 +371,54 @@ src/Parameters.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Parameters.cpp.s
 .PHONY : src/Parameters.cpp.s
 
+src/ParticleSolver.o: src/ParticleSolver.cpp.o
+.PHONY : src/ParticleSolver.o
+
+# target to build an object file
+src/ParticleSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSolver.cpp.o
+.PHONY : src/ParticleSolver.cpp.o
+
+src/ParticleSolver.i: src/ParticleSolver.cpp.i
+.PHONY : src/ParticleSolver.i
+
+# target to preprocess a source file
+src/ParticleSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSolver.cpp.i
+.PHONY : src/ParticleSolver.cpp.i
+
+src/ParticleSolver.s: src/ParticleSolver.cpp.s
+.PHONY : src/ParticleSolver.s
+
+# target to generate assembly for a file
+src/ParticleSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSolver.cpp.s
+.PHONY : src/ParticleSolver.cpp.s
+
+src/ParticleSystem.o: src/ParticleSystem.cpp.o
+.PHONY : src/ParticleSystem.o
+
+# target to build an object file
+src/ParticleSystem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSystem.cpp.o
+.PHONY : src/ParticleSystem.cpp.o
+
+src/ParticleSystem.i: src/ParticleSystem.cpp.i
+.PHONY : src/ParticleSystem.i
+
+# target to preprocess a source file
+src/ParticleSystem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSystem.cpp.i
+.PHONY : src/ParticleSystem.cpp.i
+
+src/ParticleSystem.s: src/ParticleSystem.cpp.s
+.PHONY : src/ParticleSystem.s
+
+# target to generate assembly for a file
+src/ParticleSystem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/ParticleSystem.cpp.s
+.PHONY : src/ParticleSystem.cpp.s
+
 src/PoissonSolver.o: src/PoissonSolver.cpp.o
 .PHONY : src/PoissonSolver.o
 
@@ -625,6 +673,12 @@ help:
 	@echo "... src/Parameters.o"
 	@echo "... src/Parameters.i"
 	@echo "... src/Parameters.s"
+	@echo "... src/ParticleSolver.o"
+	@echo "... src/ParticleSolver.i"
+	@echo "... src/ParticleSolver.s"
+	@echo "... src/ParticleSystem.o"
+	@echo "... src/ParticleSystem.i"
+	@echo "... src/ParticleSystem.s"
 	@echo "... src/PoissonSolver.o"
 	@echo "... src/PoissonSolver.i"
 	@echo "... src/PoissonSolver.s"

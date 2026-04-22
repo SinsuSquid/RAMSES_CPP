@@ -6,6 +6,8 @@
 #include "PoissonSolver.hpp"
 #include "TreeUpdater.hpp"
 #include "Config.hpp"
+#include "ParticleSystem.hpp"
+#include "ParticleSolver.hpp"
 
 namespace ramses {
 
@@ -14,7 +16,7 @@ namespace ramses {
  */
 class Simulation {
 public:
-    Simulation() : hydro_(grid_), poisson_(grid_), updater_(grid_) {}
+    Simulation() : hydro_(grid_), poisson_(grid_), updater_(grid_), ptcl_solver_(grid_, ps_) {}
 
     void initialize(const std::string& nml_path);
     void run();
@@ -28,6 +30,8 @@ private:
     PoissonSolver poisson_;
     TreeUpdater updater_;
     Config config_;
+    ParticleSystem ps_;
+    ParticleSolver ptcl_solver_;
 
     real_t t_ = 0.0;
     real_t tend_ = 1.0;

@@ -44,6 +44,8 @@ set(RAMSES_SOURCES
     src/PoissonSolver.cpp
     src/Initializer.cpp
     src/RamsesWriter.cpp
+    src/ParticleSystem.cpp
+    src/ParticleSolver.cpp
 )
 
 # Main library
