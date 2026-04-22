@@ -3,6 +3,7 @@
 
 #include "AmrGrid.hpp"
 #include "HydroSolver.hpp"
+#include "PoissonSolver.hpp"
 #include "TreeUpdater.hpp"
 #include "Config.hpp"
 
@@ -10,32 +11,20 @@ namespace ramses {
 
 /**
  * @brief Main simulation driver for RAMSES-CPP.
- * 
- * Orchestrates the AMR grid, Hydro solver, and Tree updates.
  */
 class Simulation {
 public:
-    Simulation() : hydro_(grid_), updater_(grid_) {}
+    Simulation() : hydro_(grid_), poisson_(grid_), updater_(grid_) {}
 
-    /**
-     * @brief Initializes the simulation from a namelist file.
-     */
     void initialize(const std::string& nml_path);
-
-    /**
-     * @brief Executes the main time-stepping loop.
-     */
     void run();
 
 private:
-    /**
-     * @brief Performs a single AMR step at a specific level.
-     * Replicates amr_step.f90 logic.
-     */
     void amr_step(int ilevel);
 
     AmrGrid grid_;
     HydroSolver hydro_;
+    PoissonSolver poisson_;
     TreeUpdater updater_;
     Config config_;
 

@@ -50,9 +50,23 @@ This file tracks the architectural decisions and progress of the port from Fortr
 1. **Directional Invariance:** The unsplit solver treats all dimensions symmetrically, utilizing a unified stencil gathering and flux update API.
 2. **Sub-cycling Logic:** Chose a recursive implementation for `amr_step` to match RAMSES' time-integration strategy, enabling different levels to remain synchronized.
 
+## Phase 8: MPI Parallelization (Current)
+
+### [2026-04-22] - Multi-Processor Foundation
+- **MpiManager:** Created a singleton manager for MPI lifecycle control.
+- **Build System:** Integrated `FindMPI` into CMake, enabling parallel compilation and linking.
+- **Verification:** Successfully verified MPI initialization and rank reporting.
+
+## Phase 9: Poisson Solver (Current)
+
+### [2026-04-22] - Self-Gravity Skeleton
+- **PoissonSolver Class:** Created the framework for a Multigrid-based Poisson solver.
+- **Simulation Integration:** Integrated gravity solving into the `amr_step` sequence before the hydro update.
+- **Verification:** Verified solver orchestration within the main time-stepping loop.
+
 ## Final Summary of C++ Port Initialization
-The RAMSES-2025 C++ port is now **fully initialized, runnable, and physically consistent** in 3D.
+The RAMSES-2025 C++ port is now **fully initialized, parallel-ready, and self-gravitating** as a prototype.
 - [x] Functional Recursive Time-Loop
-- [x] Complete 3D Stencil Gathering (27 neighbors)
-- [x] 3D Unsplit Godunov Solver
-- [x] Refinement marking & Interpolation foundations
+- [x] MPI Parallel Execution Foundation
+- [x] Poisson Solver Orchestration
+- [x] 3D Unsplit Godunov Physics

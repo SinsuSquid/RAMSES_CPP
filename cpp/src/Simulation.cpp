@@ -44,7 +44,10 @@ void Simulation::run() {
 void Simulation::amr_step(int ilevel) {
     if (ilevel > grid_.nlevelmax) return;
 
-    // 1. Hydro update for this level
+    // 1. Poisson solver (gravity)
+    poisson_.solve(ilevel);
+
+    // 2. Hydro update for this level
     hydro_.godunov_fine(ilevel);
     
     // 2. Recursive step for finer levels (Sub-cycling)

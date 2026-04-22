@@ -4,6 +4,9 @@ project(ramses-cpp LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Find MPI
+find_package(MPI REQUIRED)
+
 # Options
 set(RAMSES_NDIM 3 CACHE STRING "Number of dimensions")
 set(RAMSES_PRECISION 8 CACHE STRING "Floating point precision")
@@ -18,6 +21,7 @@ endif()
 
 # Include directories
 include_directories(include)
+include_directories(${MPI_CXX_INCLUDE_DIRS})
 
 # Source files
 set(RAMSES_SOURCES
@@ -33,14 +37,17 @@ set(RAMSES_SOURCES
     src/SlopeLimiter.cpp
     src/Muscl.cpp
     src/Simulation.cpp
+    src/MpiManager.cpp
+    src/PoissonSolver.cpp
 )
 
 # Main library
 add_library(ramses_lib STATIC ${RAMSES_SOURCES})
+target_link_libraries(ramses_lib PRIVATE MPI::MPI_CXX)
 
-# Main executable (for now a placeholder)
+# Main executable
 add_executable(ramses_main src/main.cpp)
-target_link_libraries(ramses_main ramses_lib)
+target_link_libraries(ramses_main ramses_lib MPI::MPI_CXX)
 
 # Testing (placeholder for GTest)
 enable_testing()
