@@ -3,11 +3,7 @@
 
 CMakeFiles/ramses_main.dir/src/main.cpp.o
  /home/bgkang/RAMSES_CPP/cpp/src/main.cpp
- /home/bgkang/RAMSES_CPP/cpp/include/ramses/AmrGrid.hpp
- /home/bgkang/RAMSES_CPP/cpp/include/ramses/Constants.hpp
- /home/bgkang/RAMSES_CPP/cpp/include/ramses/Field.hpp
- /home/bgkang/RAMSES_CPP/cpp/include/ramses/Parameters.hpp
- /home/bgkang/RAMSES_CPP/cpp/include/ramses/TreeUpdater.hpp
+ /home/bgkang/RAMSES_CPP/cpp/include/ramses/RiemannSolver.hpp
  /home/bgkang/RAMSES_CPP/cpp/include/ramses/Types.hpp
  /usr/include/alloca.h
  /usr/include/asm-generic/bitsperlong.h

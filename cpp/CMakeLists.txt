@@ -28,6 +28,10 @@ set(RAMSES_SOURCES
     src/Hilbert.cpp
     src/TreeUpdater.cpp
     src/RamsesReader.cpp
+    src/HydroSolver.cpp
+    src/RiemannSolver.cpp
+    src/SlopeLimiter.cpp
+    src/Muscl.cpp
 )
 
 # Main library

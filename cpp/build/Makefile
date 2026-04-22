@@ -248,6 +248,30 @@ src/Hilbert.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Hilbert.cpp.s
 .PHONY : src/Hilbert.cpp.s
 
+src/HydroSolver.o: src/HydroSolver.cpp.o
+.PHONY : src/HydroSolver.o
+
+# target to build an object file
+src/HydroSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o
+.PHONY : src/HydroSolver.cpp.o
+
+src/HydroSolver.i: src/HydroSolver.cpp.i
+.PHONY : src/HydroSolver.i
+
+# target to preprocess a source file
+src/HydroSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.i
+.PHONY : src/HydroSolver.cpp.i
+
+src/HydroSolver.s: src/HydroSolver.cpp.s
+.PHONY : src/HydroSolver.s
+
+# target to generate assembly for a file
+src/HydroSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.s
+.PHONY : src/HydroSolver.cpp.s
+
 src/Parameters.o: src/Parameters.cpp.o
 .PHONY : src/Parameters.o
 
@@ -271,6 +295,78 @@ src/Parameters.s: src/Parameters.cpp.s
 src/Parameters.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Parameters.cpp.s
 .PHONY : src/Parameters.cpp.s
+
+src/RamsesReader.o: src/RamsesReader.cpp.o
+.PHONY : src/RamsesReader.o
+
+# target to build an object file
+src/RamsesReader.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o
+.PHONY : src/RamsesReader.cpp.o
+
+src/RamsesReader.i: src/RamsesReader.cpp.i
+.PHONY : src/RamsesReader.i
+
+# target to preprocess a source file
+src/RamsesReader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.i
+.PHONY : src/RamsesReader.cpp.i
+
+src/RamsesReader.s: src/RamsesReader.cpp.s
+.PHONY : src/RamsesReader.s
+
+# target to generate assembly for a file
+src/RamsesReader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.s
+.PHONY : src/RamsesReader.cpp.s
+
+src/RiemannSolver.o: src/RiemannSolver.cpp.o
+.PHONY : src/RiemannSolver.o
+
+# target to build an object file
+src/RiemannSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o
+.PHONY : src/RiemannSolver.cpp.o
+
+src/RiemannSolver.i: src/RiemannSolver.cpp.i
+.PHONY : src/RiemannSolver.i
+
+# target to preprocess a source file
+src/RiemannSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.i
+.PHONY : src/RiemannSolver.cpp.i
+
+src/RiemannSolver.s: src/RiemannSolver.cpp.s
+.PHONY : src/RiemannSolver.s
+
+# target to generate assembly for a file
+src/RiemannSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.s
+.PHONY : src/RiemannSolver.cpp.s
+
+src/SlopeLimiter.o: src/SlopeLimiter.cpp.o
+.PHONY : src/SlopeLimiter.o
+
+# target to build an object file
+src/SlopeLimiter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o
+.PHONY : src/SlopeLimiter.cpp.o
+
+src/SlopeLimiter.i: src/SlopeLimiter.cpp.i
+.PHONY : src/SlopeLimiter.i
+
+# target to preprocess a source file
+src/SlopeLimiter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.i
+.PHONY : src/SlopeLimiter.cpp.i
+
+src/SlopeLimiter.s: src/SlopeLimiter.cpp.s
+.PHONY : src/SlopeLimiter.s
+
+# target to generate assembly for a file
+src/SlopeLimiter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.s
+.PHONY : src/SlopeLimiter.cpp.s
 
 src/TreeUpdater.o: src/TreeUpdater.cpp.o
 .PHONY : src/TreeUpdater.o
@@ -343,9 +439,21 @@ help:
 	@echo "... src/Hilbert.o"
 	@echo "... src/Hilbert.i"
 	@echo "... src/Hilbert.s"
+	@echo "... src/HydroSolver.o"
+	@echo "... src/HydroSolver.i"
+	@echo "... src/HydroSolver.s"
 	@echo "... src/Parameters.o"
 	@echo "... src/Parameters.i"
 	@echo "... src/Parameters.s"
+	@echo "... src/RamsesReader.o"
+	@echo "... src/RamsesReader.i"
+	@echo "... src/RamsesReader.s"
+	@echo "... src/RiemannSolver.o"
+	@echo "... src/RiemannSolver.i"
+	@echo "... src/RiemannSolver.s"
+	@echo "... src/SlopeLimiter.o"
+	@echo "... src/SlopeLimiter.i"
+	@echo "... src/SlopeLimiter.s"
 	@echo "... src/TreeUpdater.o"
 	@echo "... src/TreeUpdater.i"
 	@echo "... src/TreeUpdater.s"

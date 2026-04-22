@@ -156,6 +156,62 @@ CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.s"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bgkang/RAMSES_CPP/cpp/src/TreeUpdater.cpp -o CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.s
 
+CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o: CMakeFiles/ramses_lib.dir/flags.make
+CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o: /home/bgkang/RAMSES_CPP/cpp/src/RamsesReader.cpp
+CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o: CMakeFiles/ramses_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o -MF CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o.d -o CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o -c /home/bgkang/RAMSES_CPP/cpp/src/RamsesReader.cpp
+
+CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.i"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bgkang/RAMSES_CPP/cpp/src/RamsesReader.cpp > CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.i
+
+CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.s"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bgkang/RAMSES_CPP/cpp/src/RamsesReader.cpp -o CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.s
+
+CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o: CMakeFiles/ramses_lib.dir/flags.make
+CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o: /home/bgkang/RAMSES_CPP/cpp/src/HydroSolver.cpp
+CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o: CMakeFiles/ramses_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o -MF CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o.d -o CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o -c /home/bgkang/RAMSES_CPP/cpp/src/HydroSolver.cpp
+
+CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.i"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bgkang/RAMSES_CPP/cpp/src/HydroSolver.cpp > CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.i
+
+CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.s"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bgkang/RAMSES_CPP/cpp/src/HydroSolver.cpp -o CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.s
+
+CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o: CMakeFiles/ramses_lib.dir/flags.make
+CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o: /home/bgkang/RAMSES_CPP/cpp/src/RiemannSolver.cpp
+CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o: CMakeFiles/ramses_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o -MF CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o.d -o CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o -c /home/bgkang/RAMSES_CPP/cpp/src/RiemannSolver.cpp
+
+CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.i"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bgkang/RAMSES_CPP/cpp/src/RiemannSolver.cpp > CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.i
+
+CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.s"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bgkang/RAMSES_CPP/cpp/src/RiemannSolver.cpp -o CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.s
+
+CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o: CMakeFiles/ramses_lib.dir/flags.make
+CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o: /home/bgkang/RAMSES_CPP/cpp/src/SlopeLimiter.cpp
+CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o: CMakeFiles/ramses_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o -MF CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o.d -o CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o -c /home/bgkang/RAMSES_CPP/cpp/src/SlopeLimiter.cpp
+
+CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.i"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bgkang/RAMSES_CPP/cpp/src/SlopeLimiter.cpp > CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.i
+
+CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.s"
+	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bgkang/RAMSES_CPP/cpp/src/SlopeLimiter.cpp -o CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.s
+
 # Object files for target ramses_lib
 ramses_lib_OBJECTS = \
 "CMakeFiles/ramses_lib.dir/src/Constants.cpp.o" \
@@ -163,7 +219,11 @@ ramses_lib_OBJECTS = \
 "CMakeFiles/ramses_lib.dir/src/AmrGrid.cpp.o" \
 "CMakeFiles/ramses_lib.dir/src/Config.cpp.o" \
 "CMakeFiles/ramses_lib.dir/src/Hilbert.cpp.o" \
-"CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.o"
+"CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.o" \
+"CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o" \
+"CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o" \
+"CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o" \
+"CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o"
 
 # External object files for target ramses_lib
 ramses_lib_EXTERNAL_OBJECTS =
@@ -174,9 +234,13 @@ libramses_lib.a: CMakeFiles/ramses_lib.dir/src/AmrGrid.cpp.o
 libramses_lib.a: CMakeFiles/ramses_lib.dir/src/Config.cpp.o
 libramses_lib.a: CMakeFiles/ramses_lib.dir/src/Hilbert.cpp.o
 libramses_lib.a: CMakeFiles/ramses_lib.dir/src/TreeUpdater.cpp.o
+libramses_lib.a: CMakeFiles/ramses_lib.dir/src/RamsesReader.cpp.o
+libramses_lib.a: CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.o
+libramses_lib.a: CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.o
+libramses_lib.a: CMakeFiles/ramses_lib.dir/src/SlopeLimiter.cpp.o
 libramses_lib.a: CMakeFiles/ramses_lib.dir/build.make
 libramses_lib.a: CMakeFiles/ramses_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libramses_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/bgkang/RAMSES_CPP/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library libramses_lib.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/ramses_lib.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ramses_lib.dir/link.txt --verbose=$(VERBOSE)
 

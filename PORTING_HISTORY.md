@@ -25,7 +25,20 @@ This file tracks the architectural decisions and progress of the port from Fortr
 - **Physics Conversion:** Implemented automatic conversion from primitive variables (saved in RAMSES) to conservative variables (used in C++ `uold`).
 - **Parity:** This enables bit-for-bit comparison between the legacy Fortran code and the new C++ port.
 
+## Phase 6: Hydro Solver (Current)
+
+### [2026-04-22] - Godunov Solver & Riemann Physics
+- **HydroSolver Class:** Main wrapper for hydrodynamics and state management.
+- **RiemannSolver:** Standalone LLF solver implemented and verified.
+- **SlopeLimiter:** Implemented bit-perfect TVD slope limiters (MinMod, MonCen, van Leer).
+- **MUSCL Tracing:** Implemented MUSCL-Hancock prediction logic in `Muscl` class for interface state reconstruction.
+- **Verification:** Verified flux calculations and slope limiting against standard test cases.
+
+### Architectural Decisions
+1. **Physics Modularity:** Slope limiting, Riemann solving, and MUSCL tracing are implemented as independent, stateless classes to facilitate rigorous unit testing.
+2. **Stencil Handling:** Initial framework for `godfine1` batch processing of grids is established, matching RAMSES' vector-sweep optimization.
+
 ## Upcoming Milestones
-- [ ] **Hydro Solver:** Port the Godunov solver and MUSCL reconstruction.
-- [ ] **Validation Tool:** Create a CLI utility to diff two snapshots (Fortran vs C++).
-- [ ] **MPI Integration:** Begin porting `mpi_mod.f90` logic.
+- [ ] **MUSCL Reconstruction:** Implement slope limiters (MinMod, Moncen).
+- [ ] **Unsplit Scheme:** Integrate the 3D unsplit Godunov solver.
+- [ ] **Source Terms:** Add gravity and PdV source terms.
