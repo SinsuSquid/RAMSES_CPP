@@ -272,6 +272,30 @@ src/HydroSolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/HydroSolver.cpp.s
 .PHONY : src/HydroSolver.cpp.s
 
+src/Muscl.o: src/Muscl.cpp.o
+.PHONY : src/Muscl.o
+
+# target to build an object file
+src/Muscl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Muscl.cpp.o
+.PHONY : src/Muscl.cpp.o
+
+src/Muscl.i: src/Muscl.cpp.i
+.PHONY : src/Muscl.i
+
+# target to preprocess a source file
+src/Muscl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Muscl.cpp.i
+.PHONY : src/Muscl.cpp.i
+
+src/Muscl.s: src/Muscl.cpp.s
+.PHONY : src/Muscl.s
+
+# target to generate assembly for a file
+src/Muscl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Muscl.cpp.s
+.PHONY : src/Muscl.cpp.s
+
 src/Parameters.o: src/Parameters.cpp.o
 .PHONY : src/Parameters.o
 
@@ -343,6 +367,30 @@ src/RiemannSolver.s: src/RiemannSolver.cpp.s
 src/RiemannSolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/RiemannSolver.cpp.s
 .PHONY : src/RiemannSolver.cpp.s
+
+src/Simulation.o: src/Simulation.cpp.o
+.PHONY : src/Simulation.o
+
+# target to build an object file
+src/Simulation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Simulation.cpp.o
+.PHONY : src/Simulation.cpp.o
+
+src/Simulation.i: src/Simulation.cpp.i
+.PHONY : src/Simulation.i
+
+# target to preprocess a source file
+src/Simulation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Simulation.cpp.i
+.PHONY : src/Simulation.cpp.i
+
+src/Simulation.s: src/Simulation.cpp.s
+.PHONY : src/Simulation.s
+
+# target to generate assembly for a file
+src/Simulation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ramses_lib.dir/build.make CMakeFiles/ramses_lib.dir/src/Simulation.cpp.s
+.PHONY : src/Simulation.cpp.s
 
 src/SlopeLimiter.o: src/SlopeLimiter.cpp.o
 .PHONY : src/SlopeLimiter.o
@@ -442,6 +490,9 @@ help:
 	@echo "... src/HydroSolver.o"
 	@echo "... src/HydroSolver.i"
 	@echo "... src/HydroSolver.s"
+	@echo "... src/Muscl.o"
+	@echo "... src/Muscl.i"
+	@echo "... src/Muscl.s"
 	@echo "... src/Parameters.o"
 	@echo "... src/Parameters.i"
 	@echo "... src/Parameters.s"
@@ -451,6 +502,9 @@ help:
 	@echo "... src/RiemannSolver.o"
 	@echo "... src/RiemannSolver.i"
 	@echo "... src/RiemannSolver.s"
+	@echo "... src/Simulation.o"
+	@echo "... src/Simulation.i"
+	@echo "... src/Simulation.s"
 	@echo "... src/SlopeLimiter.o"
 	@echo "... src/SlopeLimiter.i"
 	@echo "... src/SlopeLimiter.s"

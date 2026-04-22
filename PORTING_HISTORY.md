@@ -37,12 +37,20 @@ This file tracks the architectural decisions and progress of the port from Fortr
 1. **Oct-Centric Processing:** The solver processes data oct-by-oct to maintain cache locality and match RAMSES' vector-sweep philosophy.
 2. **Buffer-Driven Physics:** By assembling a 6x6x6 `LocalStencil`, the physics solvers (MUSCL, Riemann) are shielded from the complexities of the AMR tree navigation.
 
+## Phase 7: Simulation Driver (Current)
+
+### [2026-04-22] - Run Loop & Orchestration
+- **Simulation Class:** Created a top-level driver to orchestrate grid management, hydro steps, and tree updates.
+- **Main Loop:** Implemented a functional time-stepping loop that drives the simulation from a `.nml` configuration file.
+- **Runnable Prototype:** Successfully executed 10 time steps for a Sedov 3D configuration, proving the end-to-end connectivity of the C++ port.
+
+### Architectural Decisions
+1. **System Orchestration:** The `Simulation` class follows the "Manager" pattern, keeping the individual components (Hydro, Grid) decoupled while providing a unified execution API.
+2. **Recursive Stepping Foundation:** The `amr_step` method is structured to eventually support RAMSES' recursive sub-cycling logic.
+
 ## Final Summary of C++ Port Initialization
-This task has successfully initialized the RAMSES-2025 C++ port with the following verified components:
-- [x] Modern C++ Build System (CMake)
-- [x] 1-Based Indexing Field Wrappers (Fortran compatibility)
-- [x] AMR Grid & Linked-List Tree Structures
-- [x] Fortran Namelist Parser
-- [x] 1D/2D/3D Hilbert Curve Indexing
-- [x] Fortran Binary Bridge (RamsesReader)
-- [x] Core Hydro Physics (LLF, MUSCL, TVD Slopes)
+The RAMSES-2025 C++ port is now **fully initialized and runnable** as a prototype.
+- [x] Functional Time-Loop Driver
+- [x] Namelist-driven Initialization
+- [x] 3D Stencil Gathering (Framework)
+- [x] Extensible Physics Engine

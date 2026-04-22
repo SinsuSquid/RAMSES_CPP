@@ -32,6 +32,7 @@ set(RAMSES_SOURCES
     src/RiemannSolver.cpp
     src/SlopeLimiter.cpp
     src/Muscl.cpp
+    src/Simulation.cpp
 )
 
 # Main library
