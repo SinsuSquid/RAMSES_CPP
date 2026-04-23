@@ -49,6 +49,9 @@ tests/**/output_*/
 *.pdf
 *.tex
 
+# Legacy codes
+legacy/
+
 # Binaries
 bin/
 build/

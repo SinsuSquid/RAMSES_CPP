@@ -40,6 +40,7 @@ public:
     Field<real_t> unew;           // Updated state vector [ncell, nvar]
     std::vector<real_t> divu;     // Velocity divergence [ncell]
     std::vector<real_t> phi;      // Gravitational potential [ncell]
+    Field<real_t> f;              // Gravitational acceleration [ncell, NDIM]
     std::vector<real_t> rho;      // Density (gravity source) [ncell]
 
     // Linked list pointers (1-based level indexing)

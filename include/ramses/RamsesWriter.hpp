@@ -26,6 +26,7 @@ public:
     bool is_open() const;
     void write_amr(const AmrGrid& grid, const SnapshotInfo& info);
     void write_hydro(const AmrGrid& grid, const SnapshotInfo& info);
+    void write_grav(const AmrGrid& grid, const SnapshotInfo& info);
 
 private:
     template <typename T>

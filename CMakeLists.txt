@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(RAMSES_NDIM 3 CACHE STRING "Number of dimensions")
 set(RAMSES_PRECISION 8 CACHE STRING "Floating point precision")
 option(RAMSES_LONGINT "Use 64-bit integers for particle IDs" ON)
-option(RAMSES_USE_MPI "Enable MPI support" OFF)
+option(RAMSES_USE_MPI "Enable MPI support" ON)
 
 # Add definitions
 add_compile_definitions(NDIM=${RAMSES_NDIM})

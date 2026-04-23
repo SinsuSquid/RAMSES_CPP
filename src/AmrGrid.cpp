@@ -31,6 +31,7 @@ void AmrGrid::allocate(int nx_val, int ny_val, int nz_val, int ngridmax_val, int
     cpu_map.assign(static_cast<size_t>(ncell) + 1, 1);
     divu.assign(static_cast<size_t>(ncell) + 1, 0.0);
     phi.assign(static_cast<size_t>(ncell) + 1, 0.0);
+    f.allocate(ncell, NDIM);
     rho.assign(static_cast<size_t>(ncell) + 1, 0.0);
 
     // Allocate physical fields
