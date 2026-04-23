@@ -44,9 +44,11 @@ build/
 *.app
 
 # Tests
+tests/test_suite.log
+tests/**/output_*/
+*.pdf
+*.tex
 
-# debug information files
-*.dwo
-
-# Legacy RAMSES .f90 files
-legacy/*
+# Binaries
+bin/
+build/

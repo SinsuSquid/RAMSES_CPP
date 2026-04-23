@@ -76,10 +76,13 @@ The RAMSES-2025 C++ port is now a **fully functional, production-ready, and test
 - **Python Plotter Patching:** Optimized `visu_ramses.py` to correctly handle 4-byte record markers and fixed offset calculation logic for modern RAMSES output schemas.
 - **MPI Integration:** Ensured `run_test_suite.sh` dynamically detects and uses `mpirun` only when `RAMSES_USE_MPI` is enabled in the C++ build.
 
-## Phase 12: Advanced Physics Driver
+## Phase 13: Test Suite Full Functionality & IO Robustness
 
-### [2026-04-23] - Physical Continuity & Parity
-- **Adaptive Time-stepping:** Implemented CFL-constrained `dt` calculation in `Simulation::run`, replacing constant increments with physically derived constraints.
-- **Namelist Integration:** Restored full `tout` and `noutput` array handling to ensure snapshots are dumped at the exact user-specified physical times.
-- **Binary Parity:** Refined `RamsesWriter` to match the exact sequence of 21+ unformatted Fortran records (headers, time variables, and level pointers), ensuring zero-mod modification for legacy analysis tools.
-- **AMR Safety:** Patched indexing logic in `get_3x3x3_father` and `gather_stencil` to support lower-dimensional simulations (1D/2D) within the 3D-optimized AMR architecture.
+### [2026-04-23] - Full Test Suite Compatibility
+- **AMR IO Parity:** Rewrote `RamsesWriter` to match the exact unformatted Fortran binary layout (records, headers, level lists, CPU maps) for both AMR and HYDRO files. This enables full compatibility with `visu_ramses.py` and other legacy analysis tools.
+- **Dynamic Variable Support:** Enhanced the simulation driver to dynamically handle different dimensions (`NDIM`) and arbitrary numbers of variables (`nvar`), including support for non-thermal energy variables (`nener`).
+- **IO Metadata Generation:** Automated the creation of `hydro_file_descriptor.txt` and `info.txt` to ensure visualization tools correctly identify simulation parameters and variable mappings.
+- **AMR Refinement Fixes:** Corrected the initial refinement loop to ensure grids are properly built up to `levelmin` before simulation start.
+- **Hydro Solver Generalization:** Updated `HydroSolver` to be fully dimension-aware and correctly utilize physical `dt` and `dx` in flux calculations.
+- **Stability and Safety:** Patched multiple 1-based indexing errors and potential out-of-bounds memory accesses in `Initializer`, `TreeUpdater`, and `RamsesWriter`.
+- **Test Suite Progress:** Successfully enabled the execution of the full `hydro` test suite, including complex cases like `sod-tube-nener` with extra passive variables.

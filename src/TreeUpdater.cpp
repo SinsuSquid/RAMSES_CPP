@@ -73,7 +73,6 @@ void TreeUpdater::make_grid_coarse(int ind_cell, int ibound, bool boundary_regio
     if (!boundary_region) {
         if (grid_.numbl(icpu, 1) > 0) {
             int tail = grid_.taill(icpu, 1);
-            check(grid_.next, igrid - 1, "next");
             grid_.next[igrid - 1] = 0;
             grid_.prev[igrid - 1] = tail;
             grid_.next[tail - 1] = igrid;
@@ -123,8 +122,8 @@ void TreeUpdater::make_grid_fine(int ind_grid_father, int icell_pos, int ilevel,
     int iy = ((icell_pos - 1) & 2) >> 1;
     int iz = ((icell_pos - 1) & 4) >> 2;
     grid_.get_xg(igrid, 1) = grid_.get_xg(ind_grid_father, 1) + (static_cast<real_t>(ix) - 0.5f) * scale;
-    grid_.get_xg(igrid, 2) = grid_.get_xg(ind_grid_father, 2) + (static_cast<real_t>(iy) - 0.5f) * scale;
-    grid_.get_xg(igrid, 3) = grid_.get_xg(ind_grid_father, 3) + (static_cast<real_t>(iz) - 0.5f) * scale;
+    if (NDIM > 1) grid_.get_xg(igrid, 2) = grid_.get_xg(ind_grid_father, 2) + (static_cast<real_t>(iy) - 0.5f) * scale;
+    if (NDIM > 2) grid_.get_xg(igrid, 3) = grid_.get_xg(ind_grid_father, 3) + (static_cast<real_t>(iz) - 0.5f) * scale;
 
     int igridn[7];
     grid_.get_nbor_grids(ind_grid_father, igridn);

@@ -1,3 +1,0 @@
-# Default header
-total 0
-lost 0

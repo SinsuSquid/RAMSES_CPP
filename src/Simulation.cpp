@@ -20,7 +20,21 @@ void Simulation::initialize(const std::string& nml_path) {
     
     int ngridmax = config_.get_int("amr_params", "ngridmax", 0);
     if (ngridmax == 0) ngridmax = config_.get_int("amr_params", "ngridtot", 1000000);
-    int nvar = config_.get_int("hydro_params", "nvar", 5);
+    
+    int nener = config_.get_int("hydro_params", "nener", 0);
+    // If nener is 0, check if prad_region is present in init_params
+    if (nener == 0) {
+        for (int i = 1; i <= 10; ++i) {
+            std::string key = "prad_region(" + std::to_string(i) + ",1)";
+            if (config_.get( "init_params", key, "").length() > 0) {
+                nener = std::max(nener, i);
+            }
+        }
+    }
+    // Standard RAMSES: nvar = 2 + NDIM + nener
+    int nvar_default = 2 + NDIM + nener;
+    int nvar = config_.get_int("hydro_params", "nvar", nvar_default);
+    
     int nlevelmax = config_.get_int("amr_params", "levelmax", 10);
     grid_.allocate(p::nx, p::ny, p::nz, ngridmax, nvar, 1, nlevelmax);
     
@@ -40,11 +54,11 @@ void Simulation::initialize(const std::string& nml_path) {
 
     // Initial AMR tree
     int levelmin = config_.get_int("amr_params", "levelmin", 1);
-    updater_.mark_all(1);
-    updater_.refine_coarse();
+    updater_.mark_all(1); // Marks level 0 cells
+    updater_.refine_coarse(); // Refines level 0 -> creates level 1 grids
     for (int ilevel = 1; ilevel < levelmin; ++ilevel) {
-        updater_.mark_all(ilevel);
-        updater_.refine_fine(ilevel);
+        updater_.mark_all(ilevel + 1); // Marks level ilevel cells
+        updater_.refine_fine(ilevel); // Refines level ilevel -> creates level ilevel+1 grids
     }
     
     Initializer init(grid_, config_);
@@ -98,8 +112,8 @@ void Simulation::amr_step(int ilevel, real_t dt) {
     if (ilevel > grid_.nlevelmax) return;
     if (grid_.count_grids_at_level(ilevel) == 0) return;
 
-    // TODO: Pass dt to solvers for physical scaling
-    hydro_.godunov_fine(ilevel);
+    real_t dx = params::boxlen / static_cast<real_t>(params::nx * (1 << (ilevel - 1)));
+    hydro_.godunov_fine(ilevel, dt, dx);
 
     // Sub-cycling
     if (ilevel < grid_.nlevelmax) {
@@ -117,39 +131,60 @@ void Simulation::dump_snapshot(int iout) {
     mkdir(dir.c_str(), 0777);
     std::string nchar = ss.str().substr(7);
     
+    SnapshotInfo info;
+    info.t = t_;
+    info.nstep = nstep_;
+    info.noutput = noutput_;
+    info.iout = iout;
+    info.tout = tout_;
+    info.gamma = config_.get_double("hydro_params", "gamma", 1.4);
+
     std::string amr_path = dir + "/amr_" + nchar + ".out00001";
     {
         RamsesWriter writer(amr_path);
-        if (writer.is_open()) writer.write_amr(grid_);
+        if (writer.is_open()) writer.write_amr(grid_, info);
     }
 
     std::string hydro_path = dir + "/hydro_" + nchar + ".out00001";
     {
         RamsesWriter writer(hydro_path);
-        if (writer.is_open()) writer.write_hydro(grid_, grid_.nlevelmax);
+        if (writer.is_open()) writer.write_hydro(grid_, info);
     }
 
     std::string info_file = dir + "/info_" + nchar + ".txt";
-    std::ofstream info(info_file);
-    if (info.is_open()) {
-        info << "ncpu         = 1\n";
-        info << "ndim         = " << NDIM << "\n";
-        info << "nx           = " << params::nx << "\n";
-        info << "ny           = " << params::ny << "\n";
-        info << "nz           = " << params::nz << "\n";
-        info << "levelmin     = 1\n";
-        info << "levelmax     = " << grid_.nlevelmax << "\n";
-        info << "ngridmax     = " << grid_.ngridmax << "\n";
-        info << "boxlen       = " << params::boxlen << "\n";
-        info << "time         = " << t_ << "\n";
-        info << "unit_l       = " << config_.get_double("units_params", "units_length", 1.0) << "\n";
-        info << "unit_d       = " << config_.get_double("units_params", "units_density", 1.0) << "\n";
-        info << "unit_t       = " << config_.get_double("units_params", "units_time", 1.0) << "\n";
-        info.close();
+    std::ofstream infof(info_file);
+    if (infof.is_open()) {
+        infof << "ncpu         = " << grid_.ncpu << "\n";
+        infof << "ndim         = " << NDIM << "\n";
+        infof << "nx           = " << params::nx << "\n";
+        infof << "ny           = " << params::ny << "\n";
+        infof << "nz           = " << params::nz << "\n";
+        infof << "levelmin     = 1\n";
+        infof << "levelmax     = " << grid_.nlevelmax << "\n";
+        infof << "ngridmax     = " << grid_.ngridmax << "\n";
+        infof << "boxlen       = " << params::boxlen << "\n";
+        infof << "time         = " << t_ << "\n";
+        infof << "unit_l       = " << config_.get_double("units_params", "units_length", 1.0) << "\n";
+        infof << "unit_d       = " << config_.get_double("units_params", "units_density", 1.0) << "\n";
+        infof << "unit_t       = " << config_.get_double("units_params", "units_time", 1.0) << "\n";
+        infof.close();
     }
 
     std::ofstream desc(dir + "/hydro_file_descriptor.txt");
-    desc << "1, density, double\n2, velocity_x, double\n3, velocity_y, double\n4, velocity_z, double\n5, pressure, double\n";
+    if (desc.is_open()) {
+        int ivar = 1;
+        desc << ivar++ << ", density, double\n";
+        for (int i = 1; i <= NDIM; ++i) {
+            char dim_char = (i == 1) ? 'x' : (i == 2 ? 'y' : 'z');
+            desc << ivar++ << ", velocity_" << dim_char << ", double\n";
+        }
+        desc << ivar++ << ", pressure, double\n";
+        int nener = grid_.nvar - (2 + NDIM);
+        for (int i = 1; i <= nener; ++i) {
+            desc << ivar++ << ", non_thermal_pressure_" << std::setw(2) << std::setfill('0') << i << ", double\n";
+        }
+        desc.close();
+    }
     
     std::ofstream header(dir + "/header_" + nchar + ".txt");
     header << "total 0\nlost 0\n";

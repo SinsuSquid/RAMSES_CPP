@@ -23,7 +23,7 @@ public:
     void run();
 
 private:
-    void amr_step(int ilevel);
+    void amr_step(int ilevel, real_t dt);
     void dump_snapshot(int iout);
 
     AmrGrid grid_;
@@ -39,6 +39,8 @@ private:
     real_t tend_ = 1.0;
     int nstep_ = 0;
     int nstepmax_ = 10;
+    int noutput_ = 0;
+    std::vector<double> tout_;
 };
 
 } // namespace ramses

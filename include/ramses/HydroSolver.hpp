@@ -14,19 +14,19 @@ class HydroSolver {
 public:
     HydroSolver(AmrGrid& grid) : grid_(grid) {}
 
-    void godunov_fine(int ilevel);
+    void godunov_fine(int ilevel, real_t dt, real_t dx);
     void set_unew(int ilevel);
     void set_uold(int ilevel);
 
-    static void ctoprim(const real_t u[], real_t q[], real_t gamma);
-    static void interpol_hydro(const real_t u1[7][5], real_t u2[8][5]);
+    void ctoprim(const real_t u[], real_t q[], real_t gamma);
+    void interpol_hydro(const real_t u1[7][20], real_t u2[8][20]);
 
     struct LocalStencil {
-        real_t uloc[6][6][6][5]; 
+        real_t uloc[6][6][6][20]; 
         bool refined[6][6][6];
     };
 
-    void godfine1(const std::vector<int>& ind_grid, int ilevel);
+    void godfine1(const std::vector<int>& ind_grid, int ilevel, real_t dt, real_t dx);
 
     /**
      * @brief Computes the dynamic timestep based on CFL condition.
