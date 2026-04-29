@@ -47,6 +47,15 @@ private:
     void godfine1(const std::vector<int>& ind_grid, int ilevel, real_t dt, real_t dx);
     void gather_stencil(int igrid, int ilevel, LocalStencil& stencil);
 
+    // MUSCL-Hancock trace
+    void trace(const real_t qloc[6][6][6][20], const real_t bfloc[6][6][6][3][2],
+               const real_t dq[6][6][6][3][20], real_t dt, real_t dx,
+               real_t qm[6][6][6][3][20], real_t qp[6][6][6][3][20]);
+
+    // Riemann solver wrappers
+    void cmpflxm(const real_t qm[6][6][6][3][20], const real_t qp[6][6][6][3][20],
+                 int idim, real_t gamma, real_t flux[6][6][6][20]);
+
     // MHD-specific methods
     void hlld(const real_t* qleft, const real_t* qright, real_t* fgdnv, real_t gamma);
     void find_mhd_flux(const real_t* qvar, real_t* cvar, real_t* ff, real_t gamma);

@@ -121,6 +121,61 @@ void MhdSolver::gather_stencil(int igrid, int ilevel, LocalStencil& stencil) {
     }
 }
 
+void MhdSolver::trace(const real_t qloc[6][6][6][20], const real_t bfloc[6][6][6][3][2],
+                       const real_t dq[6][6][6][3][20], real_t dt, real_t dx,
+                       real_t qm[6][6][6][3][20], real_t qp[6][6][6][3][20]) {
+    real_t dtdx = dt / dx;
+    real_t gamma = config_.get_double("hydro_params", "gamma", 1.4);
+    int nvar_pure = grid_.nvar - 3;
+
+    for (int k = 1; k < 5; ++k) {
+        for (int j = 1; j < 5; ++j) {
+            for (int i = 1; i < 5; ++i) {
+                // Cell centered values
+                real_t r = qloc[i][j][k][0];
+                real_t u = qloc[i][j][k][1];
+                real_t v = qloc[i][j][k][2];
+                real_t w = qloc[i][j][k][3];
+                real_t p = qloc[i][j][k][4];
+
+                for (int idim = 0; idim < NDIM; ++idim) {
+                    real_t dr_d = 0.5 * dq[i][j][k][idim][0];
+                    real_t du_d = 0.5 * dq[i][j][k][idim][1];
+                    real_t dv_d = 0.5 * dq[i][j][k][idim][2];
+                    real_t dw_d = 0.5 * dq[i][j][k][idim][3];
+                    real_t dp_d = 0.5 * dq[i][j][k][idim][4];
+
+                    // Source terms (simplified)
+                    real_t vel_n = (idim == 0) ? u : (idim == 1 ? v : w);
+                    real_t sn = (idim == 0) ? du_d : (idim == 1 ? dv_d : dw_d);
+                    
+                    real_t sr = -vel_n * dr_d - r * sn;
+                    real_t sp = -vel_n * dp_d - gamma * p * sn;
+                    
+                    real_t r_pred = r + sr * dtdx;
+                    real_t p_pred = p + sp * dtdx;
+
+                    qm[i][j][k][idim][0] = r_pred + dr_d;
+                    qp[i][j][k][idim][0] = r_pred - dr_d;
+                    qm[i][j][k][idim][4] = p_pred + dp_d;
+                    qp[i][j][k][idim][4] = p_pred - dp_d;
+
+                    for (int iv = 1; iv < 4; ++iv) {
+                        real_t dv_pred = qloc[i][j][k][iv];
+                        qm[i][j][k][idim][iv] = dv_pred + 0.5 * dq[i][j][k][idim][iv];
+                        qp[i][j][k][idim][iv] = dv_pred - 0.5 * dq[i][j][k][idim][iv];
+                    }
+                    for (int iv = 5; iv < nvar_pure; ++iv) {
+                        real_t dB_pred = qloc[i][j][k][iv];
+                        qm[i][j][k][idim][iv] = dB_pred + 0.5 * dq[i][j][k][idim][iv];
+                        qp[i][j][k][idim][iv] = dB_pred - 0.5 * dq[i][j][k][idim][iv];
+                    }
+                }
+            }
+        }
+    }
+}
+
 void MhdSolver::ctoprim(const real_t u[20], real_t q[20], real_t bf[3][2], real_t gamma) {
     const real_t smallr = 1e-10;
     real_t d = std::max(u[0], smallr);
@@ -157,6 +212,56 @@ void MhdSolver::ctoprim(const real_t u[20], real_t q[20], real_t bf[3][2], real_
     }
 }
 
+void MhdSolver::cmpflxm(const real_t qm[6][6][6][3][20], const real_t qp[6][6][6][3][20],
+                        int idim, real_t gamma, real_t flux[6][6][6][20]) {
+    int nvar_pure = grid_.nvar - 3;
+    for (int k = 1; k < 5; ++k) {
+        for (int j = 1; j < 5; ++j) {
+            for (int i = 1; i < 5; ++i) {
+                int ni = i + (idim == 0 ? 1 : 0);
+                int nj = j + (idim == 1 ? 1 : 0);
+                int nk = k + (idim == 2 ? 1 : 0);
+                if (ni >= 6 || nj >= 6 || nk >= 6) continue;
+
+                real_t qL_mhd[8], qR_mhd[8], f_mhd[9];
+                // q: rho, p, vn, Bn, vt1, Bt1, vt2, Bt2
+                qL_mhd[0] = qm[i][j][k][idim][0];
+                qL_mhd[1] = qm[i][j][k][idim][4];
+                qL_mhd[2] = qm[i][j][k][idim][1 + idim];
+                qL_mhd[3] = qm[i][j][k][idim][5 + idim]; // Bn
+                qL_mhd[4] = qm[i][j][k][idim][1 + (idim + 1) % 3];
+                qL_mhd[5] = qm[i][j][k][idim][5 + (idim + 1) % 3];
+                qL_mhd[6] = qm[i][j][k][idim][1 + (idim + 2) % 3];
+                qL_mhd[7] = qm[i][j][k][idim][5 + (idim + 2) % 3];
+
+                qR_mhd[0] = qp[ni][nj][nk][idim][0];
+                qR_mhd[1] = qp[ni][nj][nk][idim][4];
+                qR_mhd[2] = qp[ni][nj][nk][idim][1 + idim];
+                qR_mhd[3] = qp[ni][nj][nk][idim][5 + idim];
+                qR_mhd[4] = qp[ni][nj][nk][idim][1 + (idim + 1) % 3];
+                qR_mhd[5] = qp[ni][nj][nk][idim][5 + (idim + 1) % 3];
+                qR_mhd[6] = qp[ni][nj][nk][idim][1 + (idim + 2) % 3];
+                qR_mhd[7] = qp[ni][nj][nk][idim][5 + (idim + 2) % 3];
+
+                hlld(qL_mhd, qR_mhd, f_mhd, gamma);
+
+                flux[i][j][k][0] = f_mhd[0];
+                flux[i][j][k][4] = f_mhd[1];
+                flux[i][j][k][1 + idim] = f_mhd[2];
+                flux[i][j][k][1 + (idim + 1) % 3] = f_mhd[4];
+                flux[i][j][k][5 + (idim + 1) % 3] = f_mhd[5];
+                flux[i][j][k][1 + (idim + 2) % 3] = f_mhd[6];
+                flux[i][j][k][5 + (idim + 2) % 3] = f_mhd[7];
+                
+                // Passive scalars
+                for(int iv=8; iv<nvar_pure; ++iv) {
+                    flux[i][j][k][iv] = (f_mhd[0] > 0) ? f_mhd[0] * qm[i][j][k][idim][iv] : f_mhd[0] * qp[ni][nj][nk][idim][iv];
+                }
+            }
+        }
+    }
+}
+
 void MhdSolver::godfine1(const std::vector<int>& ind_grid, int ilevel, real_t dt, real_t dx) {
     real_t gamma = config_.get_double("hydro_params", "gamma", 1.4);
     real_t dt_dx = dt / dx;
@@ -182,62 +287,17 @@ void MhdSolver::godfine1(const std::vector<int>& ind_grid, int ilevel, real_t dt
             }
         }
 
-        // 2. Trace states (simplified MUSCL-Hancock for MHD)
-        // For CT, we need edges too. This is getting complex.
-        // Let's implement a simplified version first to get the structure right.
+        // 2. Trace states
+        real_t qm[6][6][6][3][20], qp[6][6][6][3][20];
+        trace(qloc, bfloc, dq, dt, dx, qm, qp);
 
-        real_t flux[6][6][6][3][20] = {0.0};
+        // 3. Compute fluxes
+        real_t fluxes[3][6][6][6][20] = {0.0};
         for (int idim = 0; idim < NDIM; ++idim) {
-            for(int k=1; k<5; ++k) for(int j=1; j<5; ++j) for(int i=1; i<5; ++i) {
-                real_t qL_interface[20], qR_interface[20];
-                
-                // Simplified reconstruction
-                for(int iv=0; iv<nvar_pure; ++iv) {
-                    qL_interface[iv] = qloc[i][j][k][iv] + 0.5 * dq[i][j][k][idim][iv];
-                }
-                int ni = i + (idim==0?1:0); int nj = j + (idim==1?1:0); int nk = k + (idim==2?1:0);
-                if (ni < 6 && nj < 6 && nk < 6) {
-                    for(int iv=0; iv<nvar_pure; ++iv) {
-                        qR_interface[iv] = qloc[ni][nj][nk][iv] - 0.5 * dq[ni][nj][nk][idim][iv];
-                    }
-
-                    // For MHD Riemann solver, we need to map the variables correctly
-                    // q: rho, p, vx, vy, vz, Bx, By, Bz
-                    real_t qL_mhd[8], qR_mhd[8], f_mhd[9];
-                    qL_mhd[0] = qL_interface[0]; // rho
-                    qL_mhd[1] = qL_interface[4]; // p
-                    qL_mhd[2] = qL_interface[1 + idim]; // vn
-                    qL_mhd[3] = bfloc[i][j][k][idim][1]; // Bn (right face of left cell)
-                    qL_mhd[4] = qL_interface[1 + (idim+1)%3]; // vt1
-                    qL_mhd[5] = qL_interface[5 + (idim+1)%3]; // Bt1
-                    qL_mhd[6] = qL_interface[1 + (idim+2)%3]; // vt2
-                    qL_mhd[7] = qL_interface[5 + (idim+2)%3]; // Bt2
-                    
-                    qR_mhd[0] = qR_interface[0];
-                    qR_mhd[1] = qR_interface[4];
-                    qR_mhd[2] = qR_interface[1 + idim];
-                    qR_mhd[3] = bfloc[ni][nj][nk][idim][0]; // Bn (left face of right cell)
-                    qR_mhd[4] = qR_interface[1 + (idim+1)%3];
-                    qR_mhd[5] = qR_interface[5 + (idim+1)%3];
-                    qR_mhd[6] = qR_interface[1 + (idim+2)%3];
-                    qR_mhd[7] = qR_interface[5 + (idim+2)%3];
-
-                    hlld(qL_mhd, qR_mhd, f_mhd, gamma);
-                    
-                    // Map back flux
-                    flux[i][j][k][idim][0] = f_mhd[0]; // rho
-                    flux[i][j][k][idim][4] = f_mhd[1]; // Etot
-                    flux[i][j][k][idim][1 + idim] = f_mhd[2]; // vn
-                    // flux[i][j][k][idim][5 + idim] = f_mhd[3]; // Bn flux is 0
-                    flux[i][j][k][idim][1 + (idim+1)%3] = f_mhd[4]; // vt1
-                    flux[i][j][k][idim][5 + (idim+1)%3] = f_mhd[5]; // Bt1
-                    flux[i][j][k][idim][1 + (idim+2)%3] = f_mhd[6]; // vt2
-                    flux[i][j][k][idim][5 + (idim+2)%3] = f_mhd[7]; // Bt2
-                }
-            }
+            cmpflxm(qm, qp, idim, gamma, fluxes[idim]);
         }
 
-        // 3. Constrained Transport (EMF)
+        // 4. Constrained Transport (EMF)
         real_t emfx[6][6][6] = {0.0}, emfy[6][6][6] = {0.0}, emfz[6][6][6] = {0.0};
         for(int k=1; k<5; ++k) for(int j=1; j<5; ++j) for(int i=1; i<5; ++i) {
             // Ez = u*By - v*Bx
@@ -284,11 +344,10 @@ void MhdSolver::godfine1(const std::vector<int>& ind_grid, int ilevel, real_t dt
             if (icell_pos <= constants::twotondim) {
                 int ind_cell = grid_.ncoarse + (icell_pos - 1) * grid_.ngridmax + igrid;
                 
-                // Hydro-like update for conservative variables
                 for (int iv = 1; iv <= nvar_pure; ++iv) {
                     for (int idim = 0; idim < NDIM; ++idim) {
                         int ni = i - (idim==0?1:0); int nj = j - (idim==1?1:0); int nk = k - (idim==2?1:0);
-                        grid_.unew(ind_cell, iv) += (flux[ni][nj][nk][idim][iv-1] - flux[i][j][k][idim][iv-1]) * dt_dx;
+                        grid_.unew(ind_cell, iv) += (fluxes[idim][ni][nj][nk][iv-1] - fluxes[idim][i][j][k][iv-1]) * dt_dx;
                     }
                 }
 
