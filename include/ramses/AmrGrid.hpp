@@ -103,6 +103,13 @@ public:
      */
     void get_3x3x3_father(int igrid, int nbors_father[27]) const;
 
+    /**
+     * @brief Computes the center coordinates of a cell.
+     * @param icell 1-based cell index.
+     * @param x Output center coordinates.
+     */
+    void get_cell_center(int icell, real_t x[3]) const;
+
 private:
     // Helper to calculate ncell = ncoarse + twotondim * ngridmax
     static int calculate_ncell(int nx, int ny, int nz, int ngridmax) {

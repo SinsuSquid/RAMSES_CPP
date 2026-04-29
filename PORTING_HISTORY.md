@@ -93,3 +93,10 @@ The RAMSES-2025 C++ port is now a **fully functional, production-ready, and test
 - **HLLD Porting:** Successfully implemented the HLLD Riemann solver in C++, ensuring it correctly handles magnetic fields and pressure-energy transformations.
 - **Integration:** Verified the HLLD solver within the `MhdSolver::godunov_fine` framework and confirmed data pipeline integrity with the `imhd-tube` test suite.
 - **Status:** Core MHD solver framework is functional; transitioning to high-order reconstruction (MUSCL) and divergence-free transport (CT).
+
+### [2026-04-29] - 3D MUSCL & Constrained Transport (CT) Implementation
+- **3D Stencil:** Refactored `MhdSolver` to use a 3D stencil (6x6x6) consistent with `HydroSolver`, enabling full AMR support for MHD.
+- **Primitive Transformation:** Implemented `MhdSolver::ctoprim` to handle face-centered magnetic fields and total energy consistent with the staggered grid layout.
+- **MUSCL Reconstruction:** Added high-order spatial reconstruction with slope limiters for all MHD variables.
+- **Constrained Transport (CT):** Implemented the CT framework to update face-centered magnetic fields using Electromotive Forces (EMF) at cell edges, ensuring $\nabla \cdot B = 0$ is maintained to machine precision.
+- **Status:** MHD solver now supports 3D unsplit integration with high-order reconstruction and divergence-free transport. Ready for full suite validation.

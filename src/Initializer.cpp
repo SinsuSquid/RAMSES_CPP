@@ -96,116 +96,84 @@ void Initializer::region_condinit() {
     int nregion = config_.get_int("init_params", "nregion", 1);
     real_t gamma = config_.get_double("hydro_params", "gamma", 1.4);
     
-    // Default Background values
-    real_t d_bg = config_.get_double("init_params", "d_region", 1.0);
-    real_t p_bg = config_.get_double("init_params", "p_region", 1e-5);
-    
-    real_t A_bg = 0.0, B_bg = 0.0, C_bg = 0.0;
-#ifdef MHD
-    A_bg = config_.get_double("init_params", "A_region", 0.0);
-    B_bg = config_.get_double("init_params", "B_region", 0.0);
-    C_bg = config_.get_double("init_params", "C_region", 0.0);
-#endif
+    auto parse_list = [&](const std::string& key) {
+        std::vector<real_t> vals;
+        std::string s = config_.get("init_params", key, "");
+        if (s.empty()) return vals;
+        std::replace(s.begin(), s.end(), 'd', 'e');
+        std::replace(s.begin(), s.end(), 'D', 'e');
+        std::replace(s.begin(), s.end(), ',', ' ');
+        std::stringstream ss(s);
+        real_t v;
+        while (ss >> v) vals.push_back(v);
+        return vals;
+    };
 
-    // Initialize all cells with background
+    auto d_regs = parse_list("d_region");
+    auto p_regs = parse_list("p_region");
+    auto u_regs = parse_list("u_region");
+    auto v_regs = parse_list("v_region");
+    auto w_regs = parse_list("w_region");
+    auto A_regs = parse_list("A_region");
+    auto B_regs = parse_list("B_region");
+    auto C_regs = parse_list("C_region");
+    auto x_centers = parse_list("x_center");
+    auto length_xs = parse_list("length_x");
+
+    // Default to region 1 for all cells initially
+    real_t d_bg = !d_regs.empty() ? d_regs[0] : 1.0;
+    real_t p_bg = !p_regs.empty() ? p_regs[0] : 1e-5;
+    real_t u_bg = !u_regs.empty() ? u_regs[0] : 0.0;
+    real_t v_bg = !v_regs.empty() ? v_regs[0] : 0.0;
+    real_t w_bg = !w_regs.empty() ? w_regs[0] : 0.0;
+    real_t A_bg = !A_regs.empty() ? A_regs[0] : 0.0;
+    real_t B_bg = !B_regs.empty() ? B_regs[0] : 0.0;
+    real_t C_bg = !C_regs.empty() ? C_regs[0] : 0.0;
+
     for (int i = 1; i <= grid_.ncell; ++i) {
-        grid_.uold(i, 1) = d_bg; // density
-        for (int idim = 1; idim <= NDIM; ++idim) {
-            grid_.uold(i, 1 + idim) = 0.0; // velocity
-        }
-        
-        real_t e_kin = 0.0;
-        real_t e_mag = 0.5 * (A_bg*A_bg + B_bg*B_bg + C_bg*C_bg);
-        grid_.uold(i, NDIM + 2) = p_bg / (gamma - 1.0) + e_kin + e_mag; // total energy
-        
-#ifdef MHD
-        grid_.uold(i, 6) = A_bg;
-        grid_.uold(i, 7) = B_bg;
-        grid_.uold(i, 8) = C_bg;
-        grid_.uold(i, grid_.nvar - 2) = A_bg;
-        grid_.uold(i, grid_.nvar - 1) = B_bg;
-        grid_.uold(i, grid_.nvar) = C_bg;
-#endif
+        real_t x[3];
+        grid_.get_cell_center(i, x);
+        real_t x_phys = x[0] * params::boxlen;
 
-        int nener_start = NDIM + 3;
-#ifdef MHD
-        nener_start = 9;
-        int nvar_mhd_end = grid_.nvar - 3;
-#else
-        int nvar_mhd_end = grid_.nvar;
-#endif
-        for (int ivar = nener_start; ivar <= nvar_mhd_end; ++ivar) {
-            grid_.uold(i, ivar) = 0.0;
+        // Determine which region this cell belongs to (last matching region wins)
+        int ireg_match = 0; // 0-based index
+        for (int ireg = 1; ireg < nregion; ++ireg) {
+            real_t xc = (ireg < (int)x_centers.size()) ? x_centers[ireg] : 0.0;
+            real_t lx = (ireg < (int)length_xs.size()) ? length_xs[ireg] : 0.0;
+            if (std::abs(x_phys - xc) <= 0.5 * lx) {
+                ireg_match = ireg;
+            }
         }
+
+        real_t d = (ireg_match < (int)d_regs.size()) ? d_regs[ireg_match] : d_bg;
+        real_t p = (ireg_match < (int)p_regs.size()) ? p_regs[ireg_match] : p_bg;
+        real_t u = (ireg_match < (int)u_regs.size()) ? u_regs[ireg_match] : u_bg;
+        real_t v = (ireg_match < (int)v_regs.size()) ? v_regs[ireg_match] : v_bg;
+        real_t w = (ireg_match < (int)w_regs.size()) ? w_regs[ireg_match] : w_bg;
+        real_t A = (ireg_match < (int)A_regs.size()) ? A_regs[ireg_match] : A_bg;
+        real_t B = (ireg_match < (int)B_regs.size()) ? B_regs[ireg_match] : B_bg;
+        real_t C = (ireg_match < (int)C_regs.size()) ? C_regs[ireg_match] : C_bg;
+
+        grid_.uold(i, 1) = d;
+        grid_.uold(i, 2) = d * u;
+        grid_.uold(i, 3) = d * v;
+        grid_.uold(i, 4) = d * w;
+        
+        real_t e_kin = 0.5 * d * (u*u + v*v + w*w);
+        real_t e_mag = 0.5 * (A*A + B*B + C*C);
+        grid_.uold(i, 5) = p / (gamma - 1.0) + e_kin + e_mag;
+
+#ifdef MHD
+        grid_.uold(i, 6) = A;
+        grid_.uold(i, 7) = B;
+        grid_.uold(i, 8) = C;
+        grid_.uold(i, grid_.nvar - 2) = A;
+        grid_.uold(i, grid_.nvar - 1) = B;
+        grid_.uold(i, grid_.nvar) = C;
+#endif
         grid_.cpu_map[i] = 1;
     }
-
-    // Apply regions
-    if (nregion >= 2) {
-        // Read region 2 values (simplified)
-        std::string d_str = config_.get("init_params", "d_region", "");
-        std::string p_str = config_.get("init_params", "p_region", "");
-        real_t d2 = 0.125, p2 = 0.1;
-        if (!d_str.empty()) {
-            std::stringstream ss(d_str); double val; ss >> val; if (ss >> val) d2 = val;
-        }
-        if (!p_str.empty()) {
-            std::stringstream ss(p_str); double val; ss >> val; if (ss >> val) p2 = val;
-        }
-
-#ifdef MHD
-        real_t A2 = 0.0, B2 = 0.0, C2 = 0.0;
-        std::string A_str = config_.get("init_params", "A_region", "");
-        std::string B_str = config_.get("init_params", "B_region", "");
-        std::string C_str = config_.get("init_params", "C_region", "");
-        if (!A_str.empty()) { std::stringstream ss(A_str); double v; ss >> v; if (ss >> v) A2 = v; }
-        if (!B_str.empty()) { std::stringstream ss(B_str); double v; ss >> v; if (ss >> v) B2 = v; }
-        if (!C_str.empty()) { std::stringstream ss(C_str); double v; ss >> v; if (ss >> v) C2 = v; }
-#endif
-
-        // For Sod tube 1D, x > 0.5 is region 2.
-        for (int i = 1; i <= grid_.ncoarse; ++i) {
-            real_t x = (static_cast<real_t>(i) - 0.5f) / static_cast<real_t>(params::nx);
-            if (x > 0.5) {
-                grid_.uold(i, 1) = d2;
-                real_t e_kin = 0.0;
-                real_t e_mag = 0.0;
-#ifdef MHD
-                e_mag = 0.5 * (A2*A2 + B2*B2 + C2*C2);
-#else
-                e_mag = 0.5 * (A_bg*A_bg + B_bg*B_bg + C_bg*C_bg);
-#endif
-                grid_.uold(i, NDIM + 2) = p2 / (gamma - 1.0) + e_kin + e_mag;
-#ifdef MHD
-                grid_.uold(i, 6) = A2;
-                grid_.uold(i, 7) = B2;
-                grid_.uold(i, 8) = C2;
-                grid_.uold(i, grid_.nvar - 2) = A2;
-                grid_.uold(i, grid_.nvar - 1) = B2;
-                grid_.uold(i, grid_.nvar) = C2;
-#endif
-            }
-        }
-    }
     
-    // Special case for sod-tube-nener: handle prad_region
-    int nener = grid_.nvar - (2 + NDIM);
-    if (nener > 0) {
-        // Very simplified: just set them to some values if found in config
-        for (int ireg = 1; ireg <= nregion; ++ireg) {
-            for (int iv = 1; iv <= nener; ++iv) {
-                // prad_region(ivar, iregion)
-                std::string key = "prad_region(" + std::to_string(iv) + "," + std::to_string(ireg) + ")";
-                real_t val = config_.get_double("init_params", key, 0.0);
-                // Apply this value to the region... (omitted for brevity, POC only)
-                // For sod-tube-nener, let's just set them.
-                if (ireg == 1) {
-                    for(int i=1; i<=grid_.ncell; ++i) grid_.uold(i, NDIM + 2 + iv) = val;
-                }
-            }
-        }
-    }
-
     std::cout << "[Initializer] Applied ICs (nvar=" << grid_.nvar << ")." << std::endl;
 }
 

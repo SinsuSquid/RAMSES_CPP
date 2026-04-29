@@ -89,6 +89,46 @@ void AmrGrid::get_nbor_cells(const int igridn[7], int icell_pos, int icelln[6]) 
     }
 }
 
+void AmrGrid::get_cell_center(int icell, real_t x[3]) const {
+    if (icell <= ncoarse) {
+        int nxny = params::nx * params::ny;
+        int iz = (icell - 1) / nxny;
+        int iy = (icell - 1 - iz * nxny) / params::nx;
+        int ix = (icell - 1 - iy * params::nx - iz * nxny);
+        x[0] = (static_cast<real_t>(ix) + 0.5f) / static_cast<real_t>(params::nx);
+        if (ndim > 1) x[1] = (static_cast<real_t>(iy) + 0.5f) / static_cast<real_t>(params::ny);
+        else x[1] = 0.5f;
+        if (ndim > 2) x[2] = (static_cast<real_t>(iz) + 0.5f) / static_cast<real_t>(params::nz);
+        else x[2] = 0.5f;
+        return;
+    }
+
+    int pos = (icell - ncoarse - 1) / ngridmax + 1;
+    int igrid = icell - ncoarse - (pos - 1) * ngridmax;
+    
+    // Find level of this grid
+    int ifather = father[igrid - 1];
+    int ilevel = 2;
+    while (ifather > ncoarse) {
+        ilevel++;
+        int igrid_father = (ifather - ncoarse - 1) % ngridmax + 1;
+        ifather = father[igrid_father - 1];
+    }
+    
+    real_t dx = 0.5f / static_cast<real_t>(1 << (ilevel - 1));
+    for (int idim = 0; idim < ndim; ++idim) {
+        x[idim] = xg[idim * ngridmax + igrid - 1];
+    }
+    
+    int ix = (pos - 1) & 1;
+    int iy = ((pos - 1) & 2) >> 1;
+    int iz = ((pos - 1) & 4) >> 2;
+    
+    x[0] += (static_cast<real_t>(ix) - 0.5f) * dx;
+    if (ndim > 1) x[1] += (static_cast<real_t>(iy) - 0.5f) * dx;
+    if (ndim > 2) x[2] += (static_cast<real_t>(iz) - 0.5f) * dx;
+}
+
 void AmrGrid::get_3x3x3_father(int igrid, int nbors_father[27]) const {
     int ifather = father[igrid - 1];
     
