@@ -21,6 +21,10 @@ public:
     void smooth_fine(int ilevel);
     void authorize_fine(int ilevel);
     void ensure_ref_rules(int ilevel);
+    void init_flag(int ilevel);
+    void test_flag(int ilevel);
+    void flag_all(real_t ed, real_t ep, real_t ev, real_t eb2, const std::vector<real_t>& evar, const std::vector<int>& nexpand, int icount = 2, int nsubcycle_val = 2);
+    void refine_all();
 
     using InterpolHook = std::function<void(const real_t u1[7][64], real_t u2[8][64])>;
     void set_interpol_hook(InterpolHook hook) { interpol_hook_ = hook; }

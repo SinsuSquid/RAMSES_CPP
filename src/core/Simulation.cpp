@@ -225,23 +225,16 @@ void Simulation::initialize(const std::string& nml_path) {
 
     // 1. Base refinement loop (1 to levelmin)
     for (int il_ref = 1; il_ref <= lmin; ++il_ref) {
-        // Flag and refine all levels (1 up to nlevelmax) like legacy init_amr
-        for (int il = 1; il <= lmax; ++il) {
-            updater_.flag_fine(il, ed, ep, ev, eb2, {}, nexpand_[std::min(il, 32)], 1);
-            updater_.make_grid_fine(il); // refine_fine
-        }
+        updater_.flag_all(ed, ep, ev, eb2, {}, nexpand_, 1, 2);
+        updater_.refine_all();
         grid_.synchronize_level_counts();
     }
 
     // 2. Further refinements (levelmin+1 to levelmax)
     for (int il_ref = lmin + 1; il_ref <= lmax; ++il_ref) {
         legacy_init_flow();
-        
-        // Flag and refine all levels
-        for (int il = 1; il <= lmax; ++il) {
-            updater_.flag_fine(il, ed, ep, ev, eb2, {}, nexpand_[std::min(il, 32)], 1);
-            updater_.make_grid_fine(il);
-        }
+        updater_.flag_all(ed, ep, ev, eb2, {}, nexpand_, 1, 2);
+        updater_.refine_all();
         grid_.synchronize_level_counts();
         
         if (MpiManager::instance().size() > 1) {
@@ -251,6 +244,14 @@ void Simulation::initialize(const std::string& nml_path) {
         
         if (grid_.count_grids_at_level(il_ref) == 0) break;
     }
+
+    // 3. init_refine_2 pass (adaptive_loop.f90:58 / init_refine.f90:49-115)
+    for (int i = lmin; i <= lmax + 1; ++i) {
+        updater_.refine_all();
+        legacy_init_flow();
+        updater_.flag_all(ed, ep, ev, eb2, {}, nexpand_, 2, 2);
+    }
+    grid_.synchronize_level_counts();
 
     // 3. Final flow initialization
     nstep_ = 0;
@@ -348,9 +349,17 @@ void Simulation::run() {
         // Format: ' Fine step=',i7,' t=',1pe12.5,' dt=',1pe10.3,' a=',1pe10.3,' mem=',0pF4.1,'%'
         // Using uppercase 'E' for exponents
         // Pre-compute initial dt for parity with legacy init_time
-        if (params::levelmin <= params::nlevelmax && grid_.count_grids_at_level(params::levelmin) > 0) {
-            real_t dx = params::boxlen / (real_t)(params::nx * (1 << params::levelmin));
-            dtnew_[params::levelmin] = hydro_->compute_courant_step(params::levelmin, dx, grid_.gamma, courant_factor_);
+        real_t dt_init = 1e10;
+        for (int il = params::levelmin; il <= params::nlevelmax; ++il) {
+            if (grid_.count_grids_at_level(il) > 0) {
+                real_t dx = params::boxlen / (real_t)(params::nx * (1 << il));
+                real_t dt_l = hydro_->compute_courant_step(il, dx, grid_.gamma, courant_factor_);
+                dtnew_[il] = dt_l;
+                dt_init = std::min(dt_init, dt_l);
+            }
+        }
+        if (dt_init < 1e9) {
+            dtnew_[params::levelmin] = dt_init;
         }
 
         double mem_percent = 100.0 * (grid_.ngridmax - grid_.numbf) / std::max(1.0, (double)grid_.ngridmax);
@@ -531,11 +540,11 @@ void Simulation::amr_step(int ilevel, int icount) {
     // 1. Make new refinements and update boundaries
     if (p::levelmin < p::nlevelmax) {
         if (ilevel == p::levelmin || icount > 1) {
-            for (int i = ilevel; i <= p::nlevelmax; ++i) {
-                updater_.make_grid_fine(i + 1);
+            for (int i = ilevel + 1; i <= p::nlevelmax; ++i) {
+                updater_.make_grid_fine(i);
             }
-            for (int i = p::nlevelmax; i >= ilevel; --i) {
-                updater_.remove_grid_fine(i + 1);
+            for (int i = p::nlevelmax; i >= ilevel + 1; --i) {
+                updater_.remove_grid_fine(i);
             }
             grid_.synchronize_level_counts();
         }
@@ -628,7 +637,7 @@ void Simulation::amr_step(int ilevel, int icount) {
     // 8. Compute refinement flags for the next step (flag_fine)
     auto t_flag_start = std::chrono::high_resolution_clock::now();
     int nexp = config_.get_int("amr_params", "nexpand", 1);
-    updater_.flag_fine(ilevel + 1, err_grad_d_, err_grad_p_, err_grad_v_, err_grad_b2_, {}, nexp, icount, ilevel > 0 ? nsubcycle_[ilevel - 1] : 1);
+    updater_.flag_fine(ilevel, err_grad_d_, err_grad_p_, err_grad_v_, err_grad_b2_, {}, nexp, icount, ilevel > 0 ? nsubcycle_[ilevel - 1] : 1);
     auto t_flag_end = std::chrono::high_resolution_clock::now();
     accum_time("hydro - ghostzones", std::chrono::duration<double>(t_flag_end - t_flag_start).count());
 
