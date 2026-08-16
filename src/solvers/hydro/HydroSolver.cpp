@@ -905,8 +905,8 @@ real_t HydroSolver::compute_courant_step(int ilevel, real_t dx, real_t gamma, re
                     e_nonthermal += e_rad;
                     sum_gamma_p += grid_.gamma_rad[ie] * (grid_.gamma_rad[ie] - 1.0) * e_rad;
                 }
-                p = std::max((grid_.uold(id, iener) - 0.5 * d * v2 - e_nonthermal) * (gamma - 1.0), d * 1e-10);
-                p = std::min(p, d * 1e2);
+                real_t smallp = (real_t)1e-20 / gamma;
+                p = std::max((grid_.uold(id, iener) - 0.5 * d * v2 - e_nonthermal) * (gamma - 1.0), d * smallp);
             }
             
             real_t cs = get_cs(d, p, sum_gamma_p);
@@ -944,8 +944,8 @@ real_t HydroSolver::compute_courant_step(int ilevel, real_t dx, real_t gamma, re
                         e_nonthermal += e_rad;
                         sum_gamma_p += grid_.gamma_rad[ie] * (grid_.gamma_rad[ie] - 1.0) * e_rad;
                     }
-                    p = std::max((grid_.uold(id, iener) - 0.5 * d * v2 - e_nonthermal) * (gamma - 1.0), d * 1e-10);
-                    p = std::min(p, d * 1e2);
+                    real_t smallp = (real_t)1e-20 / gamma;
+                    p = std::max((grid_.uold(id, iener) - 0.5 * d * v2 - e_nonthermal) * (gamma - 1.0), d * smallp);
                 }
                 
                 real_t cs = get_cs(d, p, sum_gamma_p);

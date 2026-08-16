@@ -25,8 +25,7 @@ real_t SlopeLimiter::compute_slope(real_t ql, real_t qc, real_t qr, int slope_ty
                 drgt_s = 2.0 / (-nu + 1e-10) * drgt;
             }
         }
-        real_t dcen = 0.5 * (dlft + drgt);
-        real_t dsgn = (dcen >= 0.0) ? 1.0 : -1.0;
+        real_t dsgn = (dlft >= 0.0) ? 1.0 : -1.0;
         real_t dlim = std::min(std::abs(dlft_s), std::abs(drgt_s));
         if (dlft * drgt <= 0.0) dlim = 0.0;
         return dsgn * dlim;
