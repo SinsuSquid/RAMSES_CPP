@@ -488,16 +488,16 @@ void Simulation::run() {
             }
         }
 
-        // Output snapshot if needed
-        if (iout_ < (int)tout_.size() && t_ >= tout_[iout_] - 1e-10 * std::min(dtnew_[p::levelmin], p::boxlen)) {
-            dump_snapshot(snapshot_count_++); iout_++;
-        }
-
         double max_tout = 0.0;
         if (!tout_.empty()) max_tout = tout_.back();
         if (nstep_coarse >= nstepmax_ || (tend_ > 0.0 && t_ >= tend_) || (!tout_.empty() && t_ >= max_tout)) {
             finished_ = true;
         }
+    }
+
+    while (iout_ < (int)tout_.size() && t_ >= tout_[iout_] - 1e-10 * std::min(dtnew_[p::levelmin], p::boxlen)) {
+        dump_snapshot(snapshot_count_++);
+        iout_++;
     }
 
     if (MpiManager::instance().rank() == 0) {
@@ -546,6 +546,14 @@ void Simulation::amr_step(int ilevel, int icount) {
                 updater_.remove_grid_fine(i);
             }
             grid_.synchronize_level_counts();
+        }
+    }
+
+    // Output results to files (amr_step.f90:133-173)
+    if (ilevel == p::levelmin && icount == 1) {
+        if (iout_ < (int)tout_.size() && t_ >= tout_[iout_] - 1e-10 * std::min(dtnew_[p::levelmin], p::boxlen)) {
+            dump_snapshot(snapshot_count_++);
+            iout_++;
         }
     }
 

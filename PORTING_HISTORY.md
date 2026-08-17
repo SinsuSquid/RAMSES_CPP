@@ -4,7 +4,23 @@ This document tracks the milestones, architecture updates, and physics solver in
 
 ---
 
-## 🚩 Phase 52: Exact Neighbor Lookup and Stalled Refinement Discovery (In Progress) 🚀✨
+## 🎯 Next Target: Multi-Dimensional Hydro & MHD Regression Alignment 🚀✨
+* **2D/3D Hydro Regression Verification**: Run and validate 2D/3D test problems (`hydro/implosion`, `hydro/sedov3d`, `hydro/sod-tube`) using the newly aligned HLLC Riemann solver and prolongation operators.
+* **MHD HLLD Solver Realignment**: Align constrained transport (CT) EMF averaging, HLLD star state recovery, and magnetic prolongation operators in `MhdSolver` with the Fortran baseline (`legacy/mhd/`).
+* **Test Suite CI Regression Suite**: Update test suite script runner flags and baseline comparisons across remaining test cases.
+
+---
+
+## 🚩 Phase 53: Machine-Precision Hydro Alignment, Toro HLLC Solver, Boundary Prolongation, and AMR Synchronizations (Completed) 🚀✨
+**Commits:** `44c42d5`, `7bcf5b8`, `a472171`
+* **HLLC Riemann Solver Toro Alignment**: Rewrote `solve_hllc` in [RiemannSolver.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/solvers/hydro/RiemannSolver.cpp) matching `legacy/hydro/godunov_utils.f90:868-1089` exactly, sampling contact velocities $u^*$ and total pressures $P^*$ at the $x/t=0$ interface for direct Godunov flux evaluation ($f_0 = \rho_0 u_0$, $f_1 = \rho_0 u_0^2 + P_0$, $f_E = (E_0 + P_0) u_0$).
+* **MinMod Boundary Prolongation**: Integrated MinMod sub-cell reconstruction across coarse-fine interfaces in [HydroSolver.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/solvers/hydro/HydroSolver.cpp#L715-L730) matching `legacy/hydro/interpol_hydro.f90`, eliminating $O(\Delta x_c)$ boundary step discontinuities.
+* **UltraBee Limiter & Courant Precision**: Fixed UltraBee limiter sign conventions and Courant sound speed floor ($10^{-20}/\gamma$) in [SlopeLimiter.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/solvers/hydro/SlopeLimiter.cpp) and [HydroSolver.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/solvers/hydro/HydroSolver.cpp), yielding machine-precision timestep integration ($2.54 \times 10^{-12}$ error over 12,800 steps).
+* **AMR Level Indexing & Output Alignment**: Aligned level conventions across `flag_fine`, `smooth_fine`, `make_grid_fine`, and `ensure_ref_rules` in [TreeUpdater.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/core/TreeUpdater.cpp) to use unified 0-based parent indexing, and synchronized snapshot output triggers with `legacy/amr/amr_step.f90:133-173`.
+
+---
+
+## 🚩 Phase 52: Exact Neighbor Lookup and Stalled Refinement Discovery (Completed) 🚀✨
 * **Spurious Gradient Resolution**: Implemented `get_nbor_cells_exact` and father-cell fallback logic in `TreeUpdater::flag_fine` within [TreeUpdater.cpp](file:///home/bgkang/Projects/RAMSES-CPP/src/core/TreeUpdater.cpp). This correctly handles missing fine-level neighbors by intercepting the `0` return and pulling the coarse neighbor state from the father cell, successfully eliminating artificial physics gradients that previously caused runaway over-refinement to level 9.
 * **Base Refinement Stall Discovery**: With spurious gradients removed, discovered that the base `Simulation::initialize` loop stalls at `levelmin = 1`. This reveals a deeper structural bug where `flag1` and `flag2` propagation logic inside `TreeUpdater::make_grid_fine` and the bottom-up `flag_all` iteration fail to propagate the unconditional refinement up to `levelmin = 4` natively.
 
