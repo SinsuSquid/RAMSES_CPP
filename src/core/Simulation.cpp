@@ -377,8 +377,9 @@ void Simulation::run() {
 
         // 1. Refine coarse domain (adaptive_loop.f90:96-126)
         if (p::levelmin < p::nlevelmax) {
-             for (int il = 1; il <= p::levelmin - 1; ++il) {
+             for (int il = 0; il < p::levelmin; ++il) {
                  updater_.make_grid_fine(il);
+                 updater_.remove_grid_fine(il);
              }
              grid_.synchronize_level_counts();
         }
@@ -393,7 +394,7 @@ void Simulation::run() {
         // Build refinement map for coarser levels (adaptive_loop.f90:171)
         {
             int nexp = config_.get_int("amr_params", "nexpand", 1);
-            for (int il = p::levelmin; il >= 1; --il) {
+            for (int il = p::levelmin - 1; il >= 0; --il) {
                 updater_.flag_fine(il, err_grad_d_, err_grad_p_, err_grad_v_, err_grad_b2_, {}, nexp, 2, 2);
             }
         }
@@ -537,20 +538,16 @@ void Simulation::amr_step(int ilevel, int icount) {
         RAMSES_INFO(" Entering amr_step for level {}", ilevel);
     }
 
-    // 1. Make new refinements and update boundaries
+    // 1. Make new refinements (amr_step.f90:41-86)
     if (p::levelmin < p::nlevelmax) {
         if (ilevel == p::levelmin || icount > 1) {
-            for (int i = ilevel + 1; i <= p::nlevelmax; ++i) {
+            for (int i = ilevel; i < p::nlevelmax; ++i) {
                 updater_.make_grid_fine(i);
-            }
-            for (int i = p::nlevelmax; i >= ilevel + 1; --i) {
                 updater_.remove_grid_fine(i);
             }
             grid_.synchronize_level_counts();
         }
     }
-
-    // Removed dump_snapshot from here, moved to run()
 
     // 2. Timestep calculation (newdt_fine)
     auto t_courant_start = std::chrono::high_resolution_clock::now();
@@ -640,6 +637,26 @@ void Simulation::amr_step(int ilevel, int icount) {
     updater_.flag_fine(ilevel, err_grad_d_, err_grad_p_, err_grad_v_, err_grad_b2_, {}, nexp, icount, ilevel > 0 ? nsubcycle_[ilevel - 1] : 1);
     auto t_flag_end = std::chrono::high_resolution_clock::now();
     accum_time("hydro - ghostzones", std::chrono::duration<double>(t_flag_end - t_flag_start).count());
+
+    if (ilevel == p::levelmin && icount == 2) {
+        static int last_leaf_count = 100;
+        int leaf_count = 0;
+        for (int i = 0; i < grid_.ncell; ++i) {
+            int son = (i < grid_.ncoarse) ? grid_.son[i] : grid_.son[i];
+            if (i < grid_.ncoarse) {
+                if (grid_.son[i] == 0) leaf_count++;
+            } else {
+                int ig = ((i - grid_.ncoarse) % grid_.ngridmax) + 1;
+                int ic = ((i - grid_.ncoarse) / grid_.ngridmax) + 1;
+                int lev = grid_.get_cell_level(i + 1);
+                if (lev > 0 && grid_.son[i] == 0) leaf_count++;
+            }
+        }
+        if (leaf_count != last_leaf_count) {
+            RAMSES_INFO("Cell count changed from {} to {} at t={}", last_leaf_count, leaf_count, t_);
+            last_leaf_count = leaf_count;
+        }
+    }
 
 }
 

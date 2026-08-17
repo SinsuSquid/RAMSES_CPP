@@ -472,8 +472,8 @@ void HydroSolver::godunov_fine(int ilevel, real_t dt, real_t dx) {
                         }
                     }
                     if (idim > 0) std::swap(flux[1], flux[1+idim]);
-                    // Refluxing: update coarser neighbor cell's conservative variables
-                    if (id_n > 0 && cell_levels[id_n] < ilevel) {
+                    // Refluxing: update coarser neighbor cell's conservative variables (only if unrefined leaf)
+                    if (id_n > 0 && cell_levels[id_n] < ilevel && grid_.son.at(id_n - 1) == 0) {
                         real_t factor = 1.0 / (1 << NDIM);
                         real_t sign = (side == 0) ? 1.0 : -1.0;
                         for (int iv = 1; iv <= grid_.nvar; ++iv) {
@@ -658,11 +658,75 @@ void HydroSolver::compute_slopes(int idc, const int icelln[6], int idim, real_t 
     real_t ql[20], qc[20], qr[20], u_c[20];
     for(int iv=1; iv<=grid_.nvar; ++iv) u_c[iv-1]=grid_.uold(idc, iv);
     ctoprim(u_c, qc, grid_.gamma);
+
+    int cell_lev = grid_.get_cell_level(idc);
+
     auto get_nb_q = [&](int id_n, int side, real_t q_nb[20]) {
-        if (id_n > 0) { real_t u_nb[20]; for(int iv=1; iv<=grid_.nvar; ++iv) u_nb[iv-1]=grid_.uold(id_n, iv); ctoprim(u_nb, q_nb, grid_.gamma); }
-        else { for(int iv=0; iv<grid_.nvar; ++iv) q_nb[iv] = qc[iv]; int ib = -id_n; if(ib > 0 && ib <= (int)grid_.bound_type.size() && grid_.bound_type.at(ib-1) == 1) q_nb[1 + idim] *= -1.0; }
+        if (id_n <= 0) {
+            for(int iv=0; iv<grid_.nvar; ++iv) q_nb[iv] = qc[iv];
+            int ib = -id_n;
+            if(ib > 0 && ib <= (int)grid_.bound_type.size() && grid_.bound_type.at(ib-1) == 1) {
+                q_nb[1 + idim] *= -1.0;
+            }
+            return;
+        }
+
+        int nb_lev = grid_.get_cell_level(id_n);
+        if (nb_lev < cell_lev) {
+            // Coarse neighbor: prolong with MinMod slope matching legacy interpol_hydro
+            real_t u_n[20], u_l[20] = {0}, u_r[20] = {0};
+            for(int iv=1; iv<=grid_.nvar; ++iv) u_n[iv-1] = grid_.uold(id_n, iv);
+
+            int icn_p[6] = {0};
+            if (id_n <= grid_.ncoarse) {
+                grid_.get_nbor_cells_coarse(id_n, icn_p);
+            } else {
+                int ig_p = ((id_n - grid_.ncoarse - 1) % grid_.ngridmax) + 1;
+                int ic_p = ((id_n - grid_.ncoarse - 1) / grid_.ngridmax) + 1;
+                int ign_p[7]; grid_.get_nbor_grids(ig_p, ign_p);
+                grid_.get_nbor_cells(ign_p, ic_p, icn_p, ig_p);
+            }
+
+            int id_l = icn_p[idim*2];
+            int id_r = icn_p[idim*2+1];
+            if (id_l > 0) {
+                for(int iv=1; iv<=grid_.nvar; ++iv) u_l[iv-1] = grid_.uold(id_l, iv);
+            } else {
+                for(int iv=0; iv<grid_.nvar; ++iv) u_l[iv] = u_n[iv];
+                int ib = -id_l;
+                if (ib > 0 && ib <= (int)grid_.bound_type.size() && grid_.bound_type[ib - 1] == 1) u_l[1 + idim] *= -1.0;
+            }
+            if (id_r > 0) {
+                for(int iv=1; iv<=grid_.nvar; ++iv) u_r[iv-1] = grid_.uold(id_r, iv);
+            } else {
+                for(int iv=0; iv<grid_.nvar; ++iv) u_r[iv] = u_n[iv];
+                int ib = -id_r;
+                if (ib > 0 && ib <= (int)grid_.bound_type.size() && grid_.bound_type[ib - 1] == 1) u_r[1 + idim] *= -1.0;
+            }
+
+            real_t u_child[20];
+            for (int iv = 0; iv < grid_.nvar; ++iv) {
+                real_t dlft = u_n[iv] - u_l[iv];
+                real_t drgt = u_r[iv] - u_n[iv];
+                real_t minmod = 0.0;
+                if (dlft * drgt > 0.0) {
+                    real_t sgn = (dlft >= 0.0) ? 1.0 : -1.0;
+                    minmod = sgn * 0.5 * std::min(std::abs(dlft), std::abs(drgt));
+                }
+                // side 0: id_n is left neighbor, adjacent fine cell is right child (+0.5 * minmod)
+                // side 1: id_n is right neighbor, adjacent fine cell is left child (-0.5 * minmod)
+                u_child[iv] = (side == 0) ? (u_n[iv] + 0.5 * minmod) : (u_n[iv] - 0.5 * minmod);
+            }
+            ctoprim(u_child, q_nb, grid_.gamma);
+        } else {
+            real_t u_nb[20];
+            for(int iv=1; iv<=grid_.nvar; ++iv) u_nb[iv-1] = grid_.uold(id_n, iv);
+            ctoprim(u_nb, q_nb, grid_.gamma);
+        }
     };
-    get_nb_q(icelln[idim*2], 0, ql); get_nb_q(icelln[idim*2+1], 1, qr);
+
+    get_nb_q(icelln[idim*2], 0, ql);
+    get_nb_q(icelln[idim*2+1], 1, qr);
 
     real_t nu = qc[1 + idim] * dt / dx; // Courant number for Superbee/Ultrabee
 
